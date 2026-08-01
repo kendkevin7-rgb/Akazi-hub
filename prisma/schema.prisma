@@ -1,0 +1,216 @@
+// Akazi Hub — Database Schema
+// PostgreSQL + Prisma
+// Run `npx prisma db push` (or generate a migration) once DATABASE_URL is set.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------------------------
+
+enum Role {
+  CLIENT
+  WORKER
+  ADMIN
+}
+
+enum Skill {
+  PLUMBER
+  ELECTRICIAN
+  CLEANER
+  PAINTER
+  MASON
+  DRIVER
+  IT_SUPPORT
+  SOFTWARE_ENGINEER
+  WEDDING_PLANNER
+  CHEF
+  HOME_WORKER
+  FITNESS_TRAINER
+  EVENT_SERVICES
+}
+
+enum RateUnit {
+  HOUR
+  DAY
+}
+
+enum MomoProvider {
+  MTN_MOMO
+  AIRTEL_MONEY
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum JobStatus {
+  PENDING_DEPOSIT
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum OtpPurpose {
+  LOGIN
+  REGISTRATION
+  PHONE_CHANGE
+}
+
+// ---------------------------------------------------------------------------
+// CORE MODELS
+// ---------------------------------------------------------------------------
+
+/// A single account table for both clients and workers.
+/// `role` determines which relations (WorkerProfile, etc.) are populated.
+model User {
+  id            String   @id @default(cuid())
+  phoneNumber   String   @unique // E.164 format, e.g. +250788123456
+  fullName      String
+  role          Role     @default(CLIENT)
+  preferredLang String   @default("en") // "en" | "rw" | "fr"
+  city          String   @default("Kigali")
+  neighborhood  String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  otpCodes        OtpCode[]
+  workerProfile   WorkerProfile?
+  jobsAsClient    JobPosting[]     @relation("ClientJobs")
+  ratingsGiven    Rating[]         @relation("RatingsGiven")
+
+  @@index([role])
+  @@map("users")
+}
+
+/// One-time password records for phone-based authentication.
+/// In production, codes are hashed before storage; plain text shown here for schema clarity.
+model OtpCode {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  purpose   OtpPurpose @default(LOGIN)
+  expiresAt DateTime
+  consumedAt DateTime?
+  createdAt DateTime   @default(now())
+
+  @@index([userId])
+  @@map("otp_codes")
+}
+
+/// Extended profile for users with role = WORKER.
+model WorkerProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  primarySkill   Skill
+  secondarySkills Skill[] @default([])
+  bio            String?  @db.Text
+  photoUrl       String?
+
+  rateRwf        Int
+  rateUnit       RateUnit @default(HOUR)
+
+  momoProvider   MomoProvider
+  momoNumber     String
+
+  isAvailable    Boolean  @default(true)
+  jobsCompleted  Int      @default(0)
+  yearsActive    Int      @default(0)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  verification   Verification?
+  jobsAsWorker   JobPosting[]   @relation("WorkerJobs")
+  ratingsReceived Rating[]      @relation("RatingsReceived")
+
+  @@index([primarySkill])
+  @@index([isAvailable])
+  @@map("worker_profiles")
+}
+
+/// National ID (NID) verification record — one per worker.
+/// `nidNumber` should be encrypted at rest in production; stored plain here for schema clarity only.
+model Verification {
+  id              String             @id @default(cuid())
+  workerProfileId String             @unique
+  workerProfile   WorkerProfile      @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+
+  nidNumber       String             @unique // 16 digits, starts with 1 or 2
+  status          VerificationStatus @default(PENDING)
+  verifiedAt      DateTime?
+  reviewedBy      String? // admin user id, if manually reviewed
+  rejectionReason String?
+
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@map("verifications")
+}
+
+/// A booking created by a client for a specific worker.
+model JobPosting {
+  id               String    @id @default(cuid())
+
+  clientId         String
+  client           User      @relation("ClientJobs", fields: [clientId], references: [id])
+
+  workerProfileId  String
+  workerProfile    WorkerProfile @relation("WorkerJobs", fields: [workerProfileId], references: [id])
+
+  taskDescription  String    @db.Text
+  scheduledFor     DateTime
+  clientPhone      String
+
+  status           JobStatus @default(PENDING_DEPOSIT)
+  depositRwf       Int
+  depositPaidAt    DateTime?
+  momoTransactionRef String?
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  rating           Rating?
+
+  @@index([clientId])
+  @@index([workerProfileId])
+  @@index([status])
+  @@map("job_postings")
+}
+
+/// Post-job rating left by the client for the worker.
+model Rating {
+  id              String   @id @default(cuid())
+
+  jobPostingId    String   @unique
+  jobPosting      JobPosting @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+
+  workerProfileId String
+  workerProfile   WorkerProfile @relation("RatingsReceived", fields: [workerProfileId], references: [id])
+
+  raterId         String
+  rater           User     @relation("RatingsGiven", fields: [raterId], references: [id])
+
+  stars           Int      // 1-5
+  comment         String?  @db.Text
+
+  createdAt       DateTime @default(now())
+
+  @@index([workerProfileId])
+  @@map("ratings")
+}
