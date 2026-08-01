@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   reactStrictMode: true,
   images: {
     // Remote worker/profile photos would be served from Akazi Hub's CDN in production.
