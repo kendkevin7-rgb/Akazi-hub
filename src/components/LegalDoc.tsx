@@ -53,7 +53,7 @@ export default function LegalDoc({
       </div>
 
       <div className="rounded-xl2 border border-brand-100 bg-brand-50/60 p-4 text-sm text-brand-800">
-        <strong>{t("contactUs")}:</strong> legal@akazihub.rw · +250 788 000 000
+        <strong>{t("contactUs")}:</strong> legal@akazihub.rw · +250 794 626 004
       </div>
     </div>
   );

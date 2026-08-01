@@ -3,7 +3,7 @@
 import { MessageCircle } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 
-const SUPPORT_NUMBER = "250788000000";
+const SUPPORT_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_SUPPORT_NUMBER || "250794626004";
 
 export default function WhatsAppButton() {
   const { t } = useLanguage();
