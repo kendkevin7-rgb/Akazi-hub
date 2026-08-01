@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Sora, Manrope } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import { AuthProvider } from "@/components/AuthProvider";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -39,13 +40,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${sora.variable} ${manrope.variable}`}>
       <body className="font-body">
         <LanguageProvider>
-          <div className="min-h-screen bg-surface pb-20">
-            <Header />
-            <main className="container-mobile px-4 pt-4">{children}</main>
-            <Footer />
-            <WhatsAppButton />
-            <BottomNav />
-          </div>
+          <AuthProvider>
+            <div className="min-h-screen bg-surface pb-20">
+              <Header />
+              <main className="container-mobile px-4 pt-4">{children}</main>
+              <Footer />
+              <WhatsAppButton />
+              <BottomNav />
+            </div>
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

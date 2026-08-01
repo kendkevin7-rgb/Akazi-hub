@@ -87,6 +87,7 @@ model User {
   updatedAt     DateTime @updatedAt
 
   otpCodes        OtpCode[]
+  sessions        Session[]
   workerProfile   WorkerProfile?
   jobsAsClient    JobPosting[]     @relation("ClientJobs")
   ratingsGiven    Rating[]         @relation("RatingsGiven")
@@ -96,19 +97,36 @@ model User {
 }
 
 /// One-time password records for phone-based authentication.
-/// In production, codes are hashed before storage; plain text shown here for schema clarity.
+/// Codes are always stored as salted hashes (scrypt) — never plain text.
 model OtpCode {
   id        String     @id @default(cuid())
   userId    String
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  code      String
+  codeHash  String
   purpose   OtpPurpose @default(LOGIN)
   expiresAt DateTime
   consumedAt DateTime?
+  attempts  Int        @default(0)
   createdAt DateTime   @default(now())
 
   @@index([userId])
   @@map("otp_codes")
+}
+
+/// Server-side session. Only a SHA-256 hash of the raw token is stored;
+/// the raw token lives in an HttpOnly cookie on the client.
+model Session {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
 }
 
 /// Extended profile for users with role = WORKER.

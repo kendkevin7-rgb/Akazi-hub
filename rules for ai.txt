@@ -1,0 +1,632 @@
+# Universal Development & Security Rules
+
+## Objective
+
+You are a senior software engineer responsible for building a secure, scalable, maintainable, and production-ready web application using PHP, MySQL, JavaScript, HTML, and CSS.
+
+Every line of code must prioritize:
+
+* Security
+* Maintainability
+* Scalability
+* Performance
+* Clean Architecture
+* Professional Coding Standards
+
+Never sacrifice security for convenience.
+
+---
+
+# 1. Project Architecture
+
+Always use a layered architecture.
+
+Separate code into:
+
+* Controllers
+* Models
+* Views
+* Services
+* Middleware
+* Helpers
+* Configuration
+* Database
+* Public Assets
+* Storage
+* Logs
+
+Business logic must never exist inside HTML pages.
+
+Database queries must never be written inside view files.
+
+Views must only display data.
+
+Controllers must only coordinate requests.
+
+Models manage database access.
+
+Services contain business logic.
+
+---
+
+# 2. Security First
+
+Assume every visitor is untrusted.
+
+Treat every input as malicious until validated.
+
+Validate:
+
+* GET
+* POST
+* PUT
+* DELETE
+* Cookies
+* Sessions
+* Headers
+* Uploaded Files
+* API Requests
+* JSON Requests
+
+Never trust client-side validation.
+
+Always validate again on the server.
+
+---
+
+# 3. SQL Security
+
+Never concatenate SQL.
+
+Always use prepared statements.
+
+Always use parameter binding.
+
+Never allow raw SQL from user input.
+
+Prevent:
+
+* SQL Injection
+* Blind SQL Injection
+* Second Order SQL Injection
+
+---
+
+# 4. Password Security
+
+Never store plaintext passwords.
+
+Always use
+
+password_hash()
+
+Always verify using
+
+password_verify()
+
+Never create custom encryption.
+
+Never expose passwords.
+
+Never log passwords.
+
+---
+
+# 5. Authentication
+
+Authentication must include:
+
+* Session validation
+* Session regeneration after login
+* Automatic logout on inactivity
+* Remember Me tokens (hashed)
+* Email verification
+* Password reset tokens
+* Logout destroys session completely
+
+Never trust session variables without verification.
+
+---
+
+# 6. Authorization
+
+Implement Role-Based Access Control.
+
+Roles example:
+
+* Super Admin
+* Admin
+* Police
+* Driver
+* User
+* Guest
+
+Every protected page must verify permissions.
+
+Never hide admin pages with CSS.
+
+Block unauthorized access on the server.
+
+---
+
+# 7. CSRF Protection
+
+Every POST request requires:
+
+* CSRF Token
+* Verification
+
+Reject invalid tokens.
+
+Generate unique tokens per session.
+
+---
+
+# 8. XSS Protection
+
+Escape all output.
+
+Use:
+
+htmlspecialchars()
+
+Never print raw user data.
+
+Sanitize:
+
+* Comments
+* Names
+* Addresses
+* Emails
+* Search fields
+* Messages
+
+---
+
+# 9. File Upload Security
+
+Allow only approved file types.
+
+Validate:
+
+* MIME type
+* Extension
+* Size
+
+Rename uploaded files.
+
+Never keep original filenames.
+
+Store uploads outside public directories whenever possible.
+
+Block executable uploads.
+
+---
+
+# 10. API Security
+
+Never hardcode API keys.
+
+Store secrets in:
+
+.env
+
+Never expose:
+
+API Keys
+
+Database Passwords
+
+Tokens
+
+Private Keys
+
+Restrict APIs by:
+
+* Domain
+* IP
+* API Scope
+
+Rotate compromised keys immediately.
+
+---
+
+# 11. Environment Variables
+
+Configuration belongs only inside:
+
+.env
+
+Never commit:
+
+.env
+
+Use:
+
+.env.example
+
+Never expose configuration through error messages.
+
+---
+
+# 12. Error Handling
+
+Never display:
+
+SQL errors
+
+Stack traces
+
+File paths
+
+Server information
+
+Show friendly messages.
+
+Log detailed errors securely.
+
+---
+
+# 13. Logging
+
+Log:
+
+Authentication attempts
+
+Failed logins
+
+Permission denials
+
+Exceptions
+
+API failures
+
+Security events
+
+Never log passwords or sensitive tokens.
+
+---
+
+# 14. Input Validation
+
+Validate:
+
+Email
+
+Phone
+
+Username
+
+Password
+
+Latitude
+
+Longitude
+
+IDs
+
+Dates
+
+Numbers
+
+Booleans
+
+Arrays
+
+JSON
+
+Reject unexpected input.
+
+---
+
+# 15. Output Encoding
+
+Escape:
+
+HTML
+
+JavaScript
+
+CSS
+
+URLs
+
+JSON
+
+Never mix contexts.
+
+---
+
+# 16. Session Security
+
+Use secure sessions.
+
+Regenerate session IDs.
+
+Destroy sessions on logout.
+
+Set:
+
+HttpOnly
+
+Secure
+
+SameSite
+
+Never expose session IDs.
+
+---
+
+# 17. Cookies
+
+Cookies must be:
+
+Secure
+
+HttpOnly
+
+SameSite=Lax or Strict
+
+Never store passwords.
+
+Never store API keys.
+
+---
+
+# 18. Rate Limiting
+
+Protect:
+
+Login
+
+Registration
+
+Password Reset
+
+Contact Forms
+
+Search
+
+API Endpoints
+
+Prevent brute-force attacks.
+
+---
+
+# 19. Google Maps
+
+Restrict API keys.
+
+Never expose server-only keys.
+
+Use HTTP Referrer restrictions for browser keys.
+
+Restrict enabled APIs.
+
+Never allow unrestricted API keys.
+
+---
+
+# 20. Database
+
+Normalize tables.
+
+Use foreign keys.
+
+Use indexes.
+
+Never duplicate data unnecessarily.
+
+Use transactions where required.
+
+---
+
+# 21. Performance
+
+Optimize queries.
+
+Use pagination.
+
+Lazy load data where appropriate.
+
+Minimize repeated queries.
+
+Compress assets.
+
+---
+
+# 22. Code Style
+
+Meaningful names only.
+
+Use:
+
+camelCase
+
+PascalCase
+
+UPPER_CASE for constants.
+
+No magic numbers.
+
+No duplicated code.
+
+Keep functions small.
+
+Single Responsibility Principle.
+
+---
+
+# 23. Documentation
+
+Every class must contain documentation.
+
+Every public function must include:
+
+Purpose
+
+Parameters
+
+Returns
+
+Exceptions
+
+---
+
+# 24. Git Rules
+
+Never commit:
+
+.env
+
+vendor/
+
+node_modules/
+
+logs/
+
+cache/
+
+uploads/
+
+temporary files
+
+credentials
+
+---
+
+# 25. Frontend
+
+Separate:
+
+HTML
+
+CSS
+
+JavaScript
+
+Avoid inline JavaScript.
+
+Avoid inline CSS.
+
+Use semantic HTML.
+
+Support accessibility.
+
+---
+
+# 26. AJAX
+
+Validate every AJAX request.
+
+Return JSON.
+
+Never trust browser responses.
+
+Verify authentication.
+
+Verify authorization.
+
+---
+
+# 27. REST API
+
+Use:
+
+GET
+
+POST
+
+PUT
+
+PATCH
+
+DELETE
+
+correctly.
+
+Return proper HTTP status codes.
+
+Return JSON consistently.
+
+---
+
+# 28. Professional Practices
+
+Follow:
+
+SOLID Principles
+
+DRY (Don't Repeat Yourself)
+
+KISS (Keep It Simple)
+
+YAGNI (You Aren't Gonna Need It)
+
+Fail Securely
+
+Least Privilege
+
+Defense in Depth
+
+Secure by Default
+
+---
+
+# 29. Security Headers
+
+Configure:
+
+Content-Security-Policy
+
+X-Frame-Options
+
+X-Content-Type-Options
+
+Referrer-Policy
+
+Permissions-Policy
+
+Strict-Transport-Security (HTTPS)
+
+---
+
+# 30. Final Checklist Before Completing Any Feature
+
+Before marking a feature complete, verify:
+
+✓ No SQL Injection risk
+
+✓ No XSS risk
+
+✓ No CSRF risk
+
+✓ No authentication bypass
+
+✓ No authorization bypass
+
+✓ Input validation implemented
+
+✓ Output escaping implemented
+
+✓ Passwords hashed
+
+✓ Errors handled
+
+✓ Logs written
+
+✓ Responsive UI
+
+✓ Accessibility considered
+
+✓ Clean architecture followed
+
+✓ No hardcoded secrets
+
+✓ No duplicate logic
+
+✓ Professional comments included
+
+✓ Production-ready code
+
+If any item fails, do not consider the feature complete. Refactor the implementation until all requirements are satisfied.

@@ -3,39 +3,75 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Check } from "lucide-react";
+import { ChevronLeft, Check, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
-import { DEFAULT_USER, getUser, setUser } from "@/lib/session";
+import { useAuth } from "@/components/AuthProvider";
+import { apiWithCsrf } from "@/lib/auth-client";
 
 export default function EditProfilePage() {
   const { t } = useLanguage();
   const router = useRouter();
-  const initial = getUser();
-  const [form, setForm] = useState({
-    name: initial.name,
-    phone: initial.phone,
-    city: initial.city,
-    neighborhood: initial.neighborhood,
-  });
+  const { user, loading, refresh } = useAuth();
   const [saved, setSaved] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [form, setForm] = useState(() => ({
+    name: user?.fullName ?? "",
+    phone: user?.phoneNumber ?? "",
+    city: user?.city ?? "",
+    neighborhood: user?.neighborhood ?? "",
+  }));
 
   const update = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setUser({ ...form, name: form.name || DEFAULT_USER.name });
-    setSaved(true);
-    setTimeout(() => router.push("/profile"), 900);
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await apiWithCsrf("/api/profile", {
+        method: "PATCH",
+        body: {
+          fullName: form.name,
+          city: form.city,
+          neighborhood: form.neighborhood,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error === "INVALID_NAME" ? t("errGeneric") : data.error ?? t("errGeneric"));
+        return;
+      }
+      await refresh();
+      setSaved(true);
+      setTimeout(() => router.push("/profile"), 900);
+    } catch {
+      setError(t("errGeneric"));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const fields = [
-    { key: "name" as const, label: t("nameLabel"), type: "text" },
-    { key: "phone" as const, label: t("phoneLabel"), type: "tel" },
-    { key: "city" as const, label: t("cityLabel"), type: "text" },
-    { key: "neighborhood" as const, label: t("neighborhoodLabel"), type: "text" },
+    { key: "name" as const, label: t("nameLabel"), type: "text", readOnly: false },
+    { key: "phone" as const, label: t("phoneLabel"), type: "tel", readOnly: true },
+    { key: "city" as const, label: t("cityLabel"), type: "text", readOnly: false },
+    { key: "neighborhood" as const, label: t("neighborhoodLabel"), type: "text", readOnly: false },
   ];
+
+  if (loading || !user) {
+    return (
+      <div className="flex flex-col items-center gap-4 py-24 text-center">
+        <Loader2 size={28} className="animate-spin text-brand-500" />
+        <Link href="/profile" className="text-sm font-bold text-brand-600">
+          {t("backToProfile")}
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 pb-6">
@@ -60,19 +96,30 @@ export default function EditProfilePage() {
                 type={f.type}
                 value={form[f.key]}
                 onChange={update(f.key)}
-                className="w-full bg-transparent text-sm font-semibold text-ink-900 outline-none placeholder:text-ink-300"
+                readOnly={f.readOnly}
+                disabled={f.readOnly}
+                className={`w-full bg-transparent text-sm font-semibold text-ink-900 outline-none placeholder:text-ink-300 ${
+                  f.readOnly ? "text-ink-400" : ""
+                }`}
                 placeholder={f.label}
               />
             </label>
           ))}
         </div>
 
+        {error && (
+          <p role="alert" className="rounded-xl2 border border-danger/20 bg-danger/10 px-3 py-2.5 text-sm font-semibold text-danger">
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
-          className="tap-target flex w-full items-center justify-center gap-2 rounded-xl2 bg-brand-500 text-sm font-bold text-white active:scale-[0.99]"
+          disabled={busy}
+          className="tap-target flex w-full items-center justify-center gap-2 rounded-xl2 bg-brand-500 text-sm font-bold text-white active:scale-[0.99] disabled:bg-ink-100 disabled:text-ink-400"
         >
-          {saved ? <Check size={16} /> : null}
-          {saved ? t("saved") : t("save")}
+          {saved ? <Check size={16} /> : busy ? <Loader2 size={16} className="animate-spin" /> : null}
+          {saved ? t("saved") : busy ? t("processing") : t("save")}
         </button>
       </form>
     </div>

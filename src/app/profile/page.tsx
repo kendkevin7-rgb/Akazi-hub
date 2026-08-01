@@ -1,26 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, HelpCircle, Info, LogOut, UserCog, Hammer, ScrollText, FileText, Shield, Check } from "lucide-react";
+import {
+  ChevronRight,
+  HelpCircle,
+  Info,
+  LogOut,
+  UserCog,
+  Hammer,
+  ScrollText,
+  FileText,
+  Shield,
+  Check,
+  LogIn,
+  Loader2,
+} from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useAuth } from "@/components/AuthProvider";
 import { LANGUAGES } from "@/lib/i18n";
-import { getUser, clearUser } from "@/lib/session";
 import clsx from "clsx";
 
 export default function ProfilePage() {
   const { t, lang, setLang } = useLanguage();
   const router = useRouter();
-  const [user, setUser] = useState(getUser());
+  const { user, loading, logout } = useAuth();
   const [loggedOut, setLoggedOut] = useState(false);
 
-  useEffect(() => {
-    setUser(getUser());
-  }, []);
-
-  const handleLogout = () => {
-    clearUser();
+  const handleLogout = async () => {
+    await logout();
     setLoggedOut(true);
     setTimeout(() => router.push("/"), 900);
   };
@@ -31,12 +40,41 @@ export default function ProfilePage() {
     { icon: Info, label: t("aboutApp"), href: "/about" },
   ];
 
-  const initials = user.name
+  const initials = (user?.fullName ?? "?")
     .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center gap-4 py-24 text-center">
+        <Loader2 size={28} className="animate-spin text-brand-500" />
+        <p className="text-sm text-ink-400">{t("profileTitle")}...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-5 pb-6">
+        <div className="flex flex-col items-center gap-3 rounded-xl2 border border-ink-100 bg-white p-6 text-center">
+          <span className="tap-target rounded-full bg-brand-50 text-brand-600" style={{ height: 64, width: 64 }}>
+            <LogIn size={28} />
+          </span>
+          <h1 className="font-display text-lg font-extrabold text-ink-900">{t("profileTitle")}</h1>
+          <p className="max-w-xs text-sm text-ink-400">{t("loginSubtitle")}</p>
+          <Link
+            href="/login"
+            className="tap-target mt-1 w-full rounded-xl2 bg-brand-500 text-sm font-bold text-white active:bg-brand-600"
+          >
+            {t("signIn")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 pb-6">
@@ -45,9 +83,9 @@ export default function ProfilePage() {
           <span className="font-display text-lg font-extrabold">{initials}</span>
         </div>
         <div>
-          <p className="font-display font-bold text-ink-900">{user.name}</p>
+          <p className="font-display font-bold text-ink-900">{user.fullName}</p>
           <p className="text-sm text-ink-400">
-            {user.phone} · {user.city}
+            {user.phoneNumber} · {user.city}
           </p>
         </div>
       </div>
