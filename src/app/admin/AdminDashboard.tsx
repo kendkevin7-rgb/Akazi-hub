@@ -41,15 +41,41 @@ interface Application {
   rejectionReason: string | null;
 }
 
-const TABS: { key: Status; label: string }[] = [
+const TABS: { key: View; label: string }[] = [
   { key: "PENDING", label: "Pending" },
   { key: "VERIFIED", label: "Verified" },
   { key: "REJECTED", label: "Rejected" },
+  { key: "BOOKINGS", label: "Bookings" },
 ];
 
+type View = Status | "BOOKINGS";
+
+interface Booking {
+  id: string;
+  clientName: string;
+  clientPhone: string;
+  workerName: string;
+  task: string;
+  scheduledFor: string;
+  status: string;
+  depositRwf: number;
+  depositPaidAt: string | null;
+  createdAt: string;
+}
+
+const BOOKING_STATUS_STYLES: Record<string, string> = {
+  PENDING_DEPOSIT: "bg-amber-100 text-amber-700",
+  CONFIRMED: "bg-brand-50 text-brand-600",
+  IN_PROGRESS: "bg-brand-50 text-brand-600",
+  COMPLETED: "bg-ink-50 text-ink-600",
+  CANCELLED: "bg-danger/10 text-danger",
+  DISPUTED: "bg-danger/10 text-danger",
+};
+
 export default function AdminDashboard() {
-  const [tab, setTab] = useState<Status>("PENDING");
+  const [tab, setTab] = useState<View>("PENDING");
   const [items, setItems] = useState<Application[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -61,6 +87,18 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
+      if (tab === "BOOKINGS") {
+        const res = await fetch("/api/admin/bookings", { cache: "no-store" });
+        if (res.status === 403) {
+          setError("FORBIDDEN");
+          setBookings([]);
+          return;
+        }
+        if (!res.ok) throw new Error("LOAD_FAILED");
+        const data = await res.json();
+        setBookings(data.bookings ?? []);
+        return;
+      }
       const res = await fetch(`/api/admin/applications?status=${tab}`, { cache: "no-store" });
       if (res.status === 403) {
         setError("FORBIDDEN");
@@ -153,7 +191,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <div className="mb-4 grid grid-cols-3 gap-2">
+      <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {TABS.map((tb) => (
           <button
             key={tb.key}
@@ -191,6 +229,49 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-center py-16 text-ink-400">
           <Loader2 size={24} className="animate-spin" />
         </div>
+      ) : tab === "BOOKINGS" ? (
+        bookings.length === 0 ? (
+          <div className="py-16 text-center text-sm font-semibold text-ink-400">
+            No bookings yet. They appear here when a client pays to hire a worker.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {bookings.map((b) => (
+              <div key={b.id} className="rounded-2xl border border-ink-100 bg-card p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="truncate text-base font-extrabold text-ink-900">{b.workerName}</h2>
+                    <p className="text-xs font-semibold text-ink-500">
+                      Client: {b.clientName} · {b.clientPhone}
+                    </p>
+                  </div>
+                  <span
+                    className={clsx(
+                      "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold",
+                      BOOKING_STATUS_STYLES[b.status] ?? "bg-ink-50 text-ink-600"
+                    )}
+                  >
+                    {b.status.replace("_", " ")}
+                  </span>
+                </div>
+                <p className="mt-2 line-clamp-2 text-sm text-ink-600">{b.task}</p>
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-ink-400">
+                  <span>
+                    {new Date(b.scheduledFor).toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}{" "}
+                    · {new Date(b.scheduledFor).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                  <span className="font-display font-extrabold text-brand-600">
+                    {b.depositRwf.toLocaleString()} RWF
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
       ) : items.length === 0 ? (
         <div className="py-16 text-center text-sm font-semibold text-ink-400">
           No {tab.toLowerCase()} applications.

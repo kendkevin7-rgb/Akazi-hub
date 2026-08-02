@@ -18,6 +18,8 @@ import {
 import { WORKERS, skillMeta } from "@/lib/mockData";
 import { useWorkers } from "@/lib/useWorkers";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useAuth } from "@/components/AuthProvider";
+import { apiWithCsrf } from "@/lib/auth-client";
 import WorkerAvatar from "@/components/WorkerAvatar";
 import { telLink, whatsappLink } from "@/lib/contact";
 import { PLATFORM_PHONE, COMMISSION_RATE, platformFee, workerReceives } from "@/lib/payments";
@@ -29,6 +31,7 @@ type Step = "details" | "processing" | "done";
 export default function HirePage({ params }: { params: { id: string } }) {
   const { t } = useLanguage();
   const { workers, loading } = useWorkers();
+  const { user, loading: authLoading } = useAuth();
 
   const source = workers.length > 0 ? workers : WORKERS;
   const worker = source.find((w) => w.id === params.id);
@@ -39,6 +42,7 @@ export default function HirePage({ params }: { params: { id: string } }) {
   const [time, setTime] = useState("");
   const [phone, setPhone] = useState("");
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!worker) {
     if (loading) {
@@ -50,6 +54,7 @@ export default function HirePage({ params }: { params: { id: string } }) {
     }
     notFound();
   }
+  const w = worker;
 
   const meta = skillMeta(worker.skill);
   const canSubmit = task.trim().length > 2 && date && time && phone.trim().length >= 9;
@@ -64,9 +69,22 @@ export default function HirePage({ params }: { params: { id: string } }) {
     }
   }
 
-  function handlePay() {
-    setStep("processing");
-    setTimeout(() => setStep("done"), 1600);
+  async function handlePay() {
+    if (!user) return;
+    setError(null);
+    try {
+      const res = await apiWithCsrf("/api/bookings", {
+        body: { workerId: w.id, task, date, time, phone },
+      });
+      if (!res.ok) {
+        setError("GENERIC");
+        return;
+      }
+      setStep("processing");
+      setTimeout(() => setStep("done"), 1600);
+    } catch {
+      setError("GENERIC");
+    }
   }
 
   return (
@@ -97,7 +115,26 @@ export default function HirePage({ params }: { params: { id: string } }) {
         </p>
       </div>
 
-      {step === "details" && (
+      {authLoading && (
+        <div className="flex items-center justify-center py-16 text-ink-400">
+          <Loader2 size={26} className="animate-spin" />
+        </div>
+      )}
+
+      {!authLoading && !user && (
+        <div className="space-y-3 rounded-xl2 border border-ink-100 bg-card p-5 text-center">
+          <h2 className="font-display text-lg font-bold text-ink-900">{t("profileTitle")}</h2>
+          <p className="text-sm text-ink-400">{t("loginSubtitle")}</p>
+          <Link
+            href={`/login?next=/hire/${worker.id}`}
+            className="tap-target w-full rounded-xl2 bg-brand-500 text-sm font-bold text-white active:bg-brand-600"
+          >
+            {t("signIn")}
+          </Link>
+        </div>
+      )}
+
+      {!authLoading && user && step === "details" && (
         <div className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-semibold text-ink-800">{t("describeTask")}</label>
@@ -182,6 +219,12 @@ export default function HirePage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
+          {error && (
+            <p className="rounded-xl2 border border-danger/20 bg-danger/10 px-3 py-2.5 text-center text-sm font-semibold text-danger">
+              {t("errGeneric")}
+            </p>
+          )}
+
           <button
             onClick={handlePay}
             disabled={!canSubmit}
@@ -192,7 +235,7 @@ export default function HirePage({ params }: { params: { id: string } }) {
         </div>
       )}
 
-      {step === "processing" && (
+      {user && step === "processing" && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
           <Loader2 size={36} className="animate-spin text-brand-500" />
           <p className="font-semibold text-ink-800">{t("processing")}</p>
@@ -200,7 +243,7 @@ export default function HirePage({ params }: { params: { id: string } }) {
         </div>
       )}
 
-      {step === "done" && (
+      {user && step === "done" && (
         <div className="space-y-4">
           <div className="flex flex-col items-center gap-3 py-4 text-center">
             <CheckCircle2 size={48} className="text-brand-500" />
