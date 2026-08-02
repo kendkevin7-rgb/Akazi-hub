@@ -41,7 +41,7 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/50 sm:items-center">
-      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-xl2 bg-card p-5 sm:rounded-xl2">
+      <div className="flex min-h-[55vh] w-full max-w-md flex-col overflow-y-auto rounded-t-xl2 bg-card p-5 sm:min-h-0 sm:rounded-xl2">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg font-bold text-ink-900">
             {t("hireTitle")} {worker.name}
@@ -161,7 +161,7 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
               </div>
               <div className="mt-3 rounded-xl2 bg-card px-3 py-2.5">
                 <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">{t("payTo")}</p>
-                <div className="mt-1 flex items-center justify-between gap-2">
+                <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
                   <span className="font-display text-sm font-extrabold text-ink-900">
                     +250 794 626 004
                     <span className="ml-1 text-xs font-semibold text-ink-400">(MTN MoMo)</span>
@@ -188,14 +188,14 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
         )}
 
         {step === "processing" && (
-          <div className="flex flex-col items-center gap-3 py-10 text-center">
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-10 text-center">
             <Loader2 size={36} className="animate-spin text-brand-500" />
             <p className="font-semibold text-ink-800">{t("processing")}</p>
           </div>
         )}
 
         {step === "ussd" && (
-          <div className="flex flex-col items-center gap-3 py-10 text-center">
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-10 text-center">
             <div className="tap-target rounded-full bg-gold-400/15 text-gold-600" style={{ height: 64, width: 64 }}>
               <Smartphone size={30} />
             </div>
@@ -207,7 +207,7 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
         )}
 
         {step === "confirmed" && (
-          <div className="flex flex-col items-center gap-3 py-10 text-center">
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-10 text-center">
             <CheckCircle2 size={44} className="text-brand-500" />
             <p className="font-display text-lg font-bold text-ink-900">{t("bookingConfirmed")}</p>
             <p className="max-w-xs text-sm text-ink-400">
