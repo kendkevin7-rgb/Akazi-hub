@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import type { Worker } from "@/lib/types";
@@ -9,11 +8,9 @@ import { useLanguage } from "@/components/LanguageProvider";
 import StarRating from "@/components/StarRating";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import WorkerAvatar from "@/components/WorkerAvatar";
-import HireModal from "@/components/HireModal";
 
 export default function WorkerCard({ worker }: { worker: Worker }) {
   const { t } = useLanguage();
-  const [hireOpen, setHireOpen] = useState(false);
   const meta = skillMeta(worker.skill);
 
   return (
@@ -59,15 +56,21 @@ export default function WorkerCard({ worker }: { worker: Worker }) {
         </div>
       </div>
 
-      <button
-        onClick={() => setHireOpen(true)}
-        disabled={!worker.available}
-        className="tap-target mt-3 w-full rounded-xl2 bg-brand-500 text-sm font-bold text-white active:bg-brand-600 disabled:cursor-not-allowed disabled:bg-ink-100 disabled:text-ink-400"
-      >
-        {t("hireNow")}
-      </button>
-
-      {hireOpen && <HireModal worker={worker} onClose={() => setHireOpen(false)} />}
+      {worker.available ? (
+        <Link
+          href={`/hire/${worker.id}`}
+          className="tap-target mt-3 w-full rounded-xl2 bg-brand-500 text-sm font-bold text-white active:bg-brand-600"
+        >
+          {t("hireNow")}
+        </Link>
+      ) : (
+        <button
+          disabled
+          className="tap-target mt-3 w-full cursor-not-allowed rounded-xl2 bg-ink-100 text-sm font-bold text-ink-400"
+        >
+          {t("hireNow")}
+        </button>
+      )}
     </div>
   );
 }
