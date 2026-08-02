@@ -10,6 +10,8 @@ import {
   FileCheck2,
   ShieldCheck,
   UserRound,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { apiWithCsrf } from "@/lib/auth-client";
 import clsx from "clsx";
@@ -53,6 +55,7 @@ export default function AdminDashboard() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -119,6 +122,25 @@ export default function AdminDashboard() {
     }
   }
 
+  async function deleteUser(a: Application) {
+    setBusyId(a.profileId);
+    setError(null);
+    try {
+      const res = await apiWithCsrf(`/api/admin/users/${a.userId}/delete`, {});
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error === "CANNOT_DELETE_SELF" ? "CANNOT_DELETE_SELF" : "ACTION_FAILED");
+        return;
+      }
+      setDeletingId(null);
+      await load();
+    } catch {
+      setError("ACTION_FAILED");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
       <header className="mb-5 flex items-center gap-3">
@@ -157,7 +179,11 @@ export default function AdminDashboard() {
       {error && error !== "FORBIDDEN" && (
         <div className="mb-4 flex items-center gap-2 rounded-xl2 border border-danger/20 bg-danger/10 p-3 text-sm font-semibold text-danger">
           <XCircle size={16} />
-          {error === "CANNOT_SUSPEND_SELF" ? "You cannot suspend yourself." : "Action failed. Try again."}
+          {error === "CANNOT_SUSPEND_SELF"
+            ? "You cannot suspend yourself."
+            : error === "CANNOT_DELETE_SELF"
+              ? "You cannot delete yourself."
+              : "Action failed. Try again."}
         </div>
       )}
 
@@ -268,6 +294,13 @@ export default function AdminDashboard() {
                     <UserRound size={14} /> {a.isActive ? "Active" : "Suspended"}
                   </span>
                 )}
+                <button
+                  onClick={() => setDeletingId(a.profileId)}
+                  disabled={busyId === a.profileId}
+                  className="tap-target flex items-center gap-1.5 rounded-xl2 border border-danger/30 px-3 py-2 text-xs font-bold text-danger active:bg-danger/10 disabled:opacity-50"
+                >
+                  <Trash2 size={14} /> Delete
+                </button>
               </div>
 
               {rejectingId === a.profileId && (
@@ -293,6 +326,39 @@ export default function AdminDashboard() {
                         setRejectReason("");
                       }}
                       className="tap-target rounded-xl2 border border-ink-100 px-3 py-2 text-xs font-bold text-ink-600"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {deletingId === a.profileId && (
+                <div className="mt-3 rounded-xl2 border border-danger/30 bg-danger/10 p-3">
+                  <p className="flex items-center gap-1.5 text-xs font-bold text-danger">
+                    <AlertTriangle size={14} />
+                    Permanently delete {a.fullName}?
+                  </p>
+                  <p className="mt-1 text-xs font-medium text-ink-600">
+                    This removes their account, profile, documents, ratings, and jobs. This cannot be undone.
+                  </p>
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      onClick={() => deleteUser(a)}
+                      disabled={busyId === a.profileId}
+                      className="tap-target flex items-center gap-1.5 rounded-xl2 bg-danger px-3 py-2 text-xs font-bold text-white disabled:opacity-50"
+                    >
+                      {busyId === a.profileId ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Trash2 size={14} />
+                      )}
+                      Confirm delete
+                    </button>
+                    <button
+                      onClick={() => setDeletingId(null)}
+                      disabled={busyId === a.profileId}
+                      className="tap-target rounded-xl2 border border-ink-100 bg-card px-3 py-2 text-xs font-bold text-ink-600"
                     >
                       Cancel
                     </button>
