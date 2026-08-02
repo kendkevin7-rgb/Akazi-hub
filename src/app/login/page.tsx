@@ -21,6 +21,7 @@ export default function LoginPage() {
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
+  const [devCode, setDevCode] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [countdown, setCountdown] = useState(0);
@@ -63,6 +64,7 @@ export default function LoginPage() {
       }
       setStep("code");
       setCode("");
+      setDevCode(data.devCode);
       setCountdown(RESEND_SECONDS);
     } catch {
       setError(t("errGeneric"));
@@ -179,6 +181,13 @@ export default function LoginPage() {
               placeholder={t("otpPlaceholder")}
               className="w-full rounded-xl2 border border-ink-100 bg-surface px-3 py-3 text-center font-display text-2xl font-extrabold tracking-[0.4em] text-ink-900 outline-none focus:border-brand-500"
             />
+
+            {devCode && (
+              <div className="rounded-xl2 border border-amber-300 bg-amber-50 px-3 py-2.5 text-center">
+                <p className="text-xs font-semibold text-amber-700">{t("devCodeHint")}</p>
+                <p className="font-display text-2xl font-extrabold tracking-[0.3em] text-amber-800">{devCode}</p>
+              </div>
+            )}
 
             {error && (
               <p role="alert" className="rounded-xl2 border border-danger/20 bg-danger/10 px-3 py-2.5 text-sm font-semibold text-danger">
