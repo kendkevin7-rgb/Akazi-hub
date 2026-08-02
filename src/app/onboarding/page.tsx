@@ -9,11 +9,12 @@ import NidVerification from "@/components/NidVerification";
 import MomoConfig from "@/components/MomoConfig";
 import DocumentUpload from "@/components/DocumentUpload";
 import PhotoUpload from "@/components/PhotoUpload";
+import CodeOfConduct from "@/components/CodeOfConduct";
 import { NEIGHBORHOODS } from "@/lib/mockData";
 import type { MomoProvider, RateUnit, Skill } from "@/lib/types";
 import clsx from "clsx";
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 export default function OnboardingPage() {
   const { t } = useLanguage();
@@ -29,17 +30,20 @@ export default function OnboardingPage() {
   const [photoReady, setPhotoReady] = useState(false);
 
   // Step 2
-  const [skill, setSkill] = useState<Skill | null>(null);
+  const [rulesAgreed, setRulesAgreed] = useState(false);
 
   // Step 3
+  const [skill, setSkill] = useState<Skill | null>(null);
+
+  // Step 4
   const [nid, setNid] = useState("");
   const [nidVerified, setNidVerified] = useState(false);
 
-  // Step 4
+  // Step 5
   const [cvReady, setCvReady] = useState(false);
   const [certReady, setCertReady] = useState(false);
 
-  // Step 5
+  // Step 6
   const [momoProvider, setMomoProvider] = useState<MomoProvider | null>(null);
   const [momoNumber, setMomoNumber] = useState("");
   const [rate, setRate] = useState("");
@@ -53,10 +57,11 @@ export default function OnboardingPage() {
       photoReady &&
       agreed &&
       dataConsent) ||
-    (step === 2 && skill !== null) ||
-    (step === 3 && nidVerified) ||
-    (step === 4 && cvReady && certReady) ||
-    (step === 5 && momoProvider !== null && momoNumber.trim().length >= 9 && rate.trim().length > 0);
+    (step === 2 && rulesAgreed) ||
+    (step === 3 && skill !== null) ||
+    (step === 4 && nidVerified) ||
+    (step === 5 && cvReady && certReady) ||
+    (step === 6 && momoProvider !== null && momoNumber.trim().length >= 9 && rate.trim().length > 0);
 
   function handleNext() {
     if (step < TOTAL_STEPS) {
@@ -184,18 +189,20 @@ export default function OnboardingPage() {
         </div>
       )}
 
-      {step === 2 && (
+      {step === 2 && <CodeOfConduct agreed={rulesAgreed} onAgreed={setRulesAgreed} />}
+
+      {step === 3 && (
         <div className="space-y-3">
           <label className="mb-1 block text-sm font-semibold text-ink-800">{t("selectSkills")}</label>
           <SkillSelector selected={skill} onSelect={setSkill} />
         </div>
       )}
 
-      {step === 3 && (
+      {step === 4 && (
         <NidVerification value={nid} onChange={setNid} verified={nidVerified} onVerified={setNidVerified} />
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <span className="rounded-full bg-brand-50 p-2.5 text-brand-600">
@@ -211,7 +218,7 @@ export default function OnboardingPage() {
         </div>
       )}
 
-      {step === 5 && (
+      {step === 6 && (
         <div className="space-y-5">
           <MomoConfig
             provider={momoProvider}
