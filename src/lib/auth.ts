@@ -3,6 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { createHash, randomBytes, randomInt, scryptSync, timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/db";
+import { sendOtpSms } from "@/lib/sms";
 
 const SESSION_COOKIE = "akazi_session";
 const CSRF_COOKIE = "akazi_csrf";
@@ -143,11 +144,13 @@ export async function requestOtp(phoneInput: string, purpose: "LOGIN" | "REGISTR
     },
   });
 
+  const sms = await sendOtpSms(phoneNumber, code);
+
   return {
     ok: true,
     userId,
     isNewUser,
-    devCode: process.env.NODE_ENV !== "production" ? code : undefined,
+    devCode: process.env.NODE_ENV !== "production" && !sms.sent ? code : undefined,
   };
 }
 
