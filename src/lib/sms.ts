@@ -1,6 +1,11 @@
 import "server-only";
 
-const AT_API_URL = "https://api.sandbox.africastalking.com/version1/messaging";
+const AT_SANDBOX_URL = "https://api.sandbox.africastalking.com/version1/messaging";
+const AT_LIVE_URL = "https://api.africastalking.com/version1/messaging";
+
+// Use the live API in production, sandbox everywhere else.
+const AT_API_URL =
+  process.env.OTP_PROVIDER_ENVIRONMENT === "production" ? AT_LIVE_URL : AT_SANDBOX_URL;
 
 interface SendSmsResult {
   sent: boolean;
