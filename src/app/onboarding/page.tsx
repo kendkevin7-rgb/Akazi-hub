@@ -8,6 +8,7 @@ import SkillSelector from "@/components/SkillSelector";
 import NidVerification from "@/components/NidVerification";
 import MomoConfig from "@/components/MomoConfig";
 import DocumentUpload from "@/components/DocumentUpload";
+import PhotoUpload from "@/components/PhotoUpload";
 import { NEIGHBORHOODS } from "@/lib/mockData";
 import type { MomoProvider, RateUnit, Skill } from "@/lib/types";
 import clsx from "clsx";
@@ -25,6 +26,7 @@ export default function OnboardingPage() {
   const [neighborhood, setNeighborhood] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [dataConsent, setDataConsent] = useState(false);
+  const [photoReady, setPhotoReady] = useState(false);
 
   // Step 2
   const [skill, setSkill] = useState<Skill | null>(null);
@@ -48,6 +50,7 @@ export default function OnboardingPage() {
       fullName.trim().length > 1 &&
       phoneNumber.trim().length >= 9 &&
       neighborhood &&
+      photoReady &&
       agreed &&
       dataConsent) ||
     (step === 2 && skill !== null) ||
@@ -111,6 +114,7 @@ export default function OnboardingPage() {
 
       {step === 1 && (
         <div className="space-y-4">
+          <PhotoUpload onChange={setPhotoReady} />
           <div>
             <label className="mb-1 block text-sm font-semibold text-ink-800">{t("fullName")}</label>
             <input
