@@ -140,6 +140,12 @@ model WorkerProfile {
   bio            String?  @db.Text
   photoUrl       String?
 
+  // Documents submitted during onboarding — file metadata only.
+  // (File bytes are stored on a storage/CDN in production; these hold references.)
+  photoFileName  String?
+  cvFileName     String?
+  certFileName   String?
+
   rateRwf        Int
   rateUnit       RateUnit @default(HOUR)
 
@@ -178,6 +184,7 @@ model Verification {
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
+  @@index([status])
   @@map("verifications")
 }
 

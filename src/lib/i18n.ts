@@ -76,6 +76,8 @@ export const dictionaries: Record<Language, Dict> = {
     rule_8: "Verified scams, fake credentials, or repeated cancellations get your account banned.",
     rulesConsent:
       "I have read and agree to the Worker Code of Conduct. I understand that breaking these rules may result in account suspension or permanent removal.",
+    submitSignIn: "Please sign in with the same phone number to submit your application.",
+    alreadyVerified: "This account is already verified as a worker.",
     momoConfig: "Payout details",
     momoProvider: "Mobile money provider",
     momoNumber: "Mobile money number",
@@ -260,6 +262,8 @@ export const dictionaries: Record<Language, Dict> = {
     rule_8: "Uburiganya bwemejwe, impamyabumenyi mpimbano, cyangwa gukuraho gahunda kenshi birakuvanaho konte.",
     rulesConsent:
       "Ndasomye kandi nemera Amategeko y'umukozi. Nzi neza ko kurenga aya mategeko bishobora gukurikirana konte cyangwa gukurwaho burundu.",
+    submitSignIn: "Injira ukoresheje nimero imwe kugira ngo wohereze ubwiyandikishe.",
+    alreadyVerified: "Konte ihari yamaze kwemezwa nk'umukozi.",
     momoConfig: "Amakuru y'ubwishyu",
     momoProvider: "Uwatanga mobile money",
     momoNumber: "Nimero ya mobile money",
@@ -436,6 +440,8 @@ export const dictionaries: Record<Language, Dict> = {
     rule_8: "Les arnaques vérifiées, les faux diplômes ou les annulations répétées entraînent le bannissement du compte.",
     rulesConsent:
       "J'ai lu et j'accepte le Code de conduite du travailleur. Je comprends que toute infraction peut entraîner la suspension ou le retrait permanent de mon compte.",
+    submitSignIn: "Veuillez vous connecter avec le même numéro pour soumettre votre candidature.",
+    alreadyVerified: "Ce compte est déjà vérifié en tant que travailleur.",
     momoConfig: "Détails de paiement",
     momoProvider: "Opérateur mobile money",
     momoNumber: "Numéro mobile money",

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, CheckCircle2, FileCheck2 } from "lucide-react";
+import { ChevronLeft, CheckCircle2, FileCheck2, Loader2, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useAuth } from "@/components/AuthProvider";
+import { apiWithCsrf } from "@/lib/auth-client";
 import SkillSelector from "@/components/SkillSelector";
 import NidVerification from "@/components/NidVerification";
 import MomoConfig from "@/components/MomoConfig";
@@ -18,8 +20,11 @@ const TOTAL_STEPS = 6;
 
 export default function OnboardingPage() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Step 1
   const [fullName, setFullName] = useState("");
@@ -28,6 +33,7 @@ export default function OnboardingPage() {
   const [agreed, setAgreed] = useState(false);
   const [dataConsent, setDataConsent] = useState(false);
   const [photoReady, setPhotoReady] = useState(false);
+  const [photoFileName, setPhotoFileName] = useState<string | undefined>(undefined);
 
   // Step 2
   const [rulesAgreed, setRulesAgreed] = useState(false);
@@ -42,6 +48,8 @@ export default function OnboardingPage() {
   // Step 5
   const [cvReady, setCvReady] = useState(false);
   const [certReady, setCertReady] = useState(false);
+  const [cvFileName, setCvFileName] = useState<string | undefined>(undefined);
+  const [certFileName, setCertFileName] = useState<string | undefined>(undefined);
 
   // Step 6
   const [momoProvider, setMomoProvider] = useState<MomoProvider | null>(null);
@@ -64,10 +72,46 @@ export default function OnboardingPage() {
     (step === 6 && momoProvider !== null && momoNumber.trim().length >= 9 && rate.trim().length > 0);
 
   function handleNext() {
+    setSubmitError(null);
     if (step < TOTAL_STEPS) {
       setStep((s) => s + 1);
     } else {
+      void submitApplication();
+    }
+  }
+
+  async function submitApplication() {
+    if (!user) {
+      setSubmitError("PLEASE_SIGN_IN");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await apiWithCsrf("/api/worker/apply", {
+        body: {
+          fullName,
+          neighborhood,
+          skill,
+          nidNumber: nid,
+          momoProvider,
+          momoNumber,
+          rateRwf: Number(rate),
+          rateUnit,
+          photoFileName,
+          cvFileName,
+          certFileName,
+        },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSubmitError(data.error === "ALREADY_VERIFIED" ? "ALREADY_VERIFIED" : "GENERIC");
+        return;
+      }
       setSubmitted(true);
+    } catch {
+      setSubmitError("GENERIC");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -119,7 +163,10 @@ export default function OnboardingPage() {
 
       {step === 1 && (
         <div className="space-y-4">
-          <PhotoUpload onChange={setPhotoReady} />
+          <PhotoUpload onChange={(ready, name) => {
+            setPhotoReady(ready);
+            setPhotoFileName(name);
+          }} />
           <div>
             <label className="mb-1 block text-sm font-semibold text-ink-800">{t("fullName")}</label>
             <input
@@ -213,8 +260,14 @@ export default function OnboardingPage() {
               <p className="text-sm text-ink-400">{t("documentsHint")}</p>
             </div>
           </div>
-          <DocumentUpload label={t("cvLabel")} hint={t("uploadHint")} onChange={setCvReady} />
-          <DocumentUpload label={t("certLabel")} hint={t("uploadHint")} onChange={setCertReady} />
+          <DocumentUpload label={t("cvLabel")} hint={t("uploadHint")} onChange={(ready, name) => {
+            setCvReady(ready);
+            setCvFileName(name);
+          }} />
+          <DocumentUpload label={t("certLabel")} hint={t("uploadHint")} onChange={(ready, name) => {
+            setCertReady(ready);
+            setCertFileName(name);
+          }} />
         </div>
       )}
 
@@ -258,12 +311,44 @@ export default function OnboardingPage() {
         </div>
       )}
 
+      {submitError && (
+        <div
+          role="alert"
+          className="flex items-start gap-2.5 rounded-xl2 border border-danger/20 bg-danger/10 px-3 py-3 text-sm font-semibold text-danger"
+        >
+          <AlertCircle size={18} className="mt-0.5 shrink-0" />
+          <span>
+            {submitError === "PLEASE_SIGN_IN" ? (
+              <>
+                {t("submitSignIn")}{" "}
+                <Link href="/login" className="font-bold underline">
+                  {t("signIn")}
+                </Link>
+              </>
+            ) : submitError === "ALREADY_VERIFIED" ? (
+              t("alreadyVerified")
+            ) : (
+              t("errGeneric")
+            )}
+          </span>
+        </div>
+      )}
+
       <button
         onClick={handleNext}
-        disabled={!canProceed}
+        disabled={!canProceed || submitting}
         className="tap-target w-full rounded-xl2 bg-brand-500 text-sm font-bold text-white active:bg-brand-600 disabled:cursor-not-allowed disabled:bg-ink-100 disabled:text-ink-400"
       >
-        {step < TOTAL_STEPS ? t("next") : t("submit")}
+        {submitting ? (
+          <span className="flex items-center gap-2">
+            <Loader2 size={16} className="animate-spin" />
+            {t("processing")}
+          </span>
+        ) : step < TOTAL_STEPS ? (
+          t("next")
+        ) : (
+          t("submit")
+        )}
       </button>
     </div>
   );

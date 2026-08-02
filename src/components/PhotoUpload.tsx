@@ -7,7 +7,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 export default function PhotoUpload({
   onChange,
 }: {
-  onChange: (ready: boolean) => void;
+  onChange: (ready: boolean, fileName?: string) => void;
 }) {
   const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +23,7 @@ export default function PhotoUpload({
       setPreview(typeof reader.result === "string" ? reader.result : null);
       setTimeout(() => {
         setUploading(false);
-        onChange(true);
+        onChange(true, f.name);
       }, 900);
     };
     reader.readAsDataURL(f);

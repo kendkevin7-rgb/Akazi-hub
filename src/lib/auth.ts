@@ -182,6 +182,15 @@ export async function verifyOtp(phoneInput: string, codeInput: string, purpose: 
 
   await prisma.otpCode.update({ where: { id: otp.id }, data: { consumedAt: new Date() } });
   await prisma.session.deleteMany({ where: { userId: user.id } }); // revoke old sessions on login
+
+  // Admin bootstrap: the phone listed in ADMIN_PHONE is promoted to ADMIN on login.
+  // OTP proves ownership of the phone, so only the account holder can become admin.
+  const adminPhone = process.env.ADMIN_PHONE?.trim();
+  if (adminPhone && user.phoneNumber === adminPhone && user.role !== "ADMIN") {
+    await prisma.user.update({ where: { id: user.id }, data: { role: "ADMIN" } });
+    user.role = "ADMIN";
+  }
+
   return { ok: true, user };
 }
 

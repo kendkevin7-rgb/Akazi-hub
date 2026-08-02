@@ -16,7 +16,7 @@ export default function DocumentUpload({
 }: {
   label: string;
   hint: string;
-  onChange: (ready: boolean) => void;
+  onChange: (ready: boolean, fileName?: string) => void;
 }) {
   const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +33,7 @@ export default function DocumentUpload({
     setTimeout(() => {
       setUploading(false);
       setDone(true);
-      onChange(true);
+      onChange(true, f.name);
     }, 1200);
   }
 

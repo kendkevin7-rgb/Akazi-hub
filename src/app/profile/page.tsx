@@ -167,6 +167,16 @@ export default function ProfilePage() {
         {t("becomeWorker")}
       </Link>
 
+      {user.role === "ADMIN" && (
+        <Link
+          href="/admin"
+          className="tap-target flex w-full items-center justify-center gap-2 rounded-xl2 border-2 border-dashed border-ink-200 bg-ink-50 text-sm font-bold text-ink-800"
+        >
+          <Shield size={16} className="text-brand-500" />
+          Admin Panel
+        </Link>
+      )}
+
       {loggedOut && (
         <p className="flex items-center justify-center gap-1.5 text-center text-sm font-semibold text-brand-600">
           <Check size={16} />
