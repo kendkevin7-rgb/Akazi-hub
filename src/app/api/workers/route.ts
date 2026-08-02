@@ -44,6 +44,7 @@ export async function GET() {
       momoNumber: p.momoNumber,
       bio: p.bio ?? "",
       available: p.isAvailable,
+      createdAt: p.createdAt.toISOString(),
     };
   });
 

@@ -15,6 +15,11 @@ export default function HomePage() {
 
   const source = workers.length > 0 ? workers : WORKERS;
   const featured = [...source].sort((a, b) => b.rating - a.rating).slice(0, 4);
+  const recent = workers.length
+    ? [...source]
+        .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
+        .slice(0, 4)
+    : [];
 
   return (
     <div className="space-y-6 pb-6">
@@ -60,6 +65,19 @@ export default function HomePage() {
           </div>
         </section>
       </Reveal>
+
+      {recent.length > 0 && (
+        <Reveal delay={200}>
+          <section>
+            <h2 className="mb-3 font-display text-base font-bold text-ink-900">{t("newWorkers")}</h2>
+            <div className="space-y-3">
+              {recent.map((w) => (
+                <WorkerCard key={w.id} worker={w} />
+              ))}
+            </div>
+          </section>
+        </Reveal>
+      )}
 
       <Reveal delay={220}>
         <Link

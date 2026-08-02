@@ -38,6 +38,7 @@ export interface Worker {
   momoNumber: string;
   bio: string;
   available: boolean;
+  createdAt?: string;
 }
 
 export interface JobPosting {
