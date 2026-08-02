@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, Smartphone, Loader2, CheckCircle2 } from "lucide-react";
+import { X, Smartphone, Loader2, CheckCircle2, Phone, MessageCircle, Mail } from "lucide-react";
 import type { Worker } from "@/lib/types";
 import { useLanguage } from "@/components/LanguageProvider";
+import { telLink, whatsappLink } from "@/lib/contact";
 
 type Step = "form" | "processing" | "ussd" | "confirmed";
 
@@ -44,6 +45,37 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
 
         {step === "form" && (
           <div className="space-y-4">
+            <div className="rounded-xl2 bg-surface p-3">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-400">
+                {t("reachWorker")}
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={telLink(worker.momoNumber)}
+                  className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-brand-500 px-3 py-2 text-xs font-bold text-white active:bg-brand-600"
+                >
+                  <Phone size={14} /> {t("call")}
+                </a>
+                <a
+                  href={whatsappLink(worker.momoNumber)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-[#25D366] px-3 py-2 text-xs font-bold text-white active:opacity-90"
+                >
+                  <MessageCircle size={14} /> {t("whatsapp")}
+                </a>
+              </div>
+              <p className="mt-2 text-center text-xs font-semibold text-ink-500">{worker.momoNumber}</p>
+              {worker.email && (
+                <a
+                  href={`mailto:${worker.email}`}
+                  className="tap-target mt-2 flex items-center justify-center gap-1.5 rounded-xl2 border border-ink-100 bg-card px-3 py-2 text-xs font-bold text-ink-700 active:bg-ink-50"
+                >
+                  <Mail size={14} /> {t("email")}: {worker.email}
+                </a>
+              )}
+            </div>
+
             <div>
               <label className="mb-1 block text-sm font-semibold text-ink-800">
                 {t("describeTask")}

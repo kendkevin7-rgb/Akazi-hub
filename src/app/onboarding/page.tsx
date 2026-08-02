@@ -29,6 +29,7 @@ export default function OnboardingPage() {
   // Step 1
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [neighborhood, setNeighborhood] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [dataConsent, setDataConsent] = useState(false);
@@ -102,6 +103,7 @@ export default function OnboardingPage() {
           photoDataUrl,
           cvFileName,
           certFileName,
+          email,
         },
       });
       const data = await res.json().catch(() => ({}));
@@ -186,6 +188,16 @@ export default function OnboardingPage() {
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="+250 7XX XXX XXX"
+              className="tap-target w-full rounded-xl2 border border-ink-100 bg-surface px-3 text-sm text-ink-900 outline-none focus:border-brand-500"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-semibold text-ink-800">{t("emailLabel")}</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@email.com"
               className="tap-target w-full rounded-xl2 border border-ink-100 bg-surface px-3 text-sm text-ink-900 outline-none focus:border-brand-500"
             />
           </div>

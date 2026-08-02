@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
     typeof body.photoDataUrl === "string" && /^data:image\/(png|jpe?g|webp);base64,/.test(body.photoDataUrl)
       ? body.photoDataUrl.slice(0, 2_000_000)
       : null;
+  const email = typeof body.email === "string" ? body.email.trim().slice(0, 120) : "";
 
   if (fullName.length < 2 || fullName.length > 120) {
     return NextResponse.json({ error: "INVALID_NAME" }, { status: 400 });
@@ -75,6 +76,9 @@ export async function POST(req: NextRequest) {
   if (!/^[12]\d{15}$/.test(nidNumber)) {
     return NextResponse.json({ error: "INVALID_NID" }, { status: 400 });
   }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    return NextResponse.json({ error: "INVALID_EMAIL" }, { status: 400 });
+  }
 
   const existing = await prisma.workerProfile.findUnique({
     where: { userId: user.id },
@@ -97,6 +101,7 @@ export async function POST(req: NextRequest) {
         photoUrl: photoDataUrl ?? undefined,
         cvFileName,
         certFileName,
+        email: email || null,
         bio: body.bio && typeof body.bio === "string" ? body.bio.slice(0, 500) : undefined,
       },
       create: {
@@ -110,6 +115,7 @@ export async function POST(req: NextRequest) {
         photoUrl: photoDataUrl ?? undefined,
         cvFileName,
         certFileName,
+        email: email || null,
       },
     });
 

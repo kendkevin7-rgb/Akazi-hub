@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
       rateUnit: a.rateUnit,
       momoProvider: a.momoProvider,
       momoNumber: a.momoNumber,
+      email: a.email,
       nidNumber: a.verification?.nidNumber ?? null,
       photoUrl: a.photoUrl,
       photoFileName: a.photoFileName,

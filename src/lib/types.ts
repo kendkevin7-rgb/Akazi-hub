@@ -36,6 +36,7 @@ export interface Worker {
   yearsActive: number;
   momoProvider: MomoProvider;
   momoNumber: string;
+  email?: string;
   bio: string;
   available: boolean;
   createdAt?: string;

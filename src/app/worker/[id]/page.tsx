@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { notFound } from "next/navigation";
-import { MapPin, Briefcase, CalendarCheck, Loader2 } from "lucide-react";
+import { MapPin, Briefcase, CalendarCheck, Loader2, Phone, MessageCircle, Mail } from "lucide-react";
 import { WORKERS, skillMeta } from "@/lib/mockData";
 import { useWorkers } from "@/lib/useWorkers";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -10,6 +10,7 @@ import StarRating from "@/components/StarRating";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import WorkerAvatar from "@/components/WorkerAvatar";
 import HireModal from "@/components/HireModal";
+import { telLink, whatsappLink } from "@/lib/contact";
 
 export default function WorkerProfilePage({ params }: { params: { id: string } }) {
   const { t } = useLanguage();
@@ -106,6 +107,35 @@ export default function WorkerProfilePage({ params }: { params: { id: string } }
           </span>
         </p>
       </div>
+
+      <section className="rounded-xl2 border border-ink-100 bg-card p-4">
+        <p className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-400">{t("reachWorker")}</p>
+        <div className="grid grid-cols-2 gap-2">
+          <a
+            href={telLink(worker.momoNumber)}
+            className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-brand-500 px-3 py-2.5 text-sm font-bold text-white active:bg-brand-600"
+          >
+            <Phone size={16} /> {t("call")}
+          </a>
+          <a
+            href={whatsappLink(worker.momoNumber)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-[#25D366] px-3 py-2.5 text-sm font-bold text-white active:opacity-90"
+          >
+            <MessageCircle size={16} /> {t("whatsapp")}
+          </a>
+        </div>
+        <p className="mt-2 text-center text-xs font-semibold text-ink-500">{worker.momoNumber}</p>
+        {worker.email && (
+          <a
+            href={`mailto:${worker.email}`}
+            className="tap-target mt-2 flex items-center justify-center gap-1.5 rounded-xl2 border border-ink-100 px-3 py-2.5 text-sm font-bold text-ink-700 active:bg-ink-50"
+          >
+            <Mail size={16} /> {t("email")}: {worker.email}
+          </a>
+        )}
+      </section>
 
       <div className="fixed inset-x-0 bottom-16 z-20 border-t border-ink-100 bg-card/98 px-4 py-3 backdrop-blur">
         <div className="container-mobile">

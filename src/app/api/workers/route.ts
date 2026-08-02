@@ -42,6 +42,7 @@ export async function GET() {
       yearsActive: p.yearsActive,
       momoProvider: p.momoProvider,
       momoNumber: p.momoNumber,
+      email: p.email,
       bio: p.bio ?? "",
       available: p.isAvailable,
       createdAt: p.createdAt.toISOString(),

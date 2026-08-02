@@ -146,6 +146,8 @@ model WorkerProfile {
   cvFileName     String?
   certFileName   String?
 
+  email          String? // optional direct contact, shown to clients when hiring
+
   rateRwf        Int
   rateUnit       RateUnit @default(HOUR)
 
