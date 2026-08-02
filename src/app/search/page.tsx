@@ -6,6 +6,7 @@ import { Search as SearchIcon, SlidersHorizontal } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import WorkerCard from "@/components/WorkerCard";
 import { WORKERS, SKILL_META } from "@/lib/mockData";
+import { useWorkers } from "@/lib/useWorkers";
 import type { Skill } from "@/lib/types";
 import clsx from "clsx";
 
@@ -13,13 +14,15 @@ function SearchPageInner() {
   const { t } = useLanguage();
   const params = useSearchParams();
   const initialSkill = (params.get("skill") as Skill | null) ?? null;
+  const { workers } = useWorkers();
 
   const [query, setQuery] = useState("");
   const [skillFilter, setSkillFilter] = useState<Skill | null>(initialSkill);
   const [availableOnly, setAvailableOnly] = useState(false);
 
   const results = useMemo(() => {
-    return WORKERS.filter((w) => {
+    const source = workers.length > 0 ? workers : WORKERS;
+    return source.filter((w) => {
       if (skillFilter && w.skill !== skillFilter) return false;
       if (availableOnly && !w.available) return false;
       if (query.trim()) {
@@ -29,7 +32,7 @@ function SearchPageInner() {
       }
       return true;
     }).sort((a, b) => b.rating - a.rating);
-  }, [query, skillFilter, availableOnly, t]);
+  }, [query, skillFilter, availableOnly, t, workers]);
 
   return (
     <div className="space-y-4 pb-6">

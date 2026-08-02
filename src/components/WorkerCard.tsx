@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import type { Worker } from "@/lib/types";
@@ -9,6 +8,7 @@ import { skillMeta } from "@/lib/mockData";
 import { useLanguage } from "@/components/LanguageProvider";
 import StarRating from "@/components/StarRating";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import WorkerAvatar from "@/components/WorkerAvatar";
 import HireModal from "@/components/HireModal";
 
 export default function WorkerCard({ worker }: { worker: Worker }) {
@@ -20,15 +20,7 @@ export default function WorkerCard({ worker }: { worker: Worker }) {
     <div className="rounded-xl2 border border-ink-100 bg-card p-3 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-floating">
       <div className="flex gap-3">
         <Link href={`/worker/${worker.id}`} className="shrink-0">
-          <div className="relative h-16 w-16 overflow-hidden rounded-xl2 bg-ink-50">
-            <Image
-              src={worker.photoUrl}
-              alt={worker.name}
-              fill
-              sizes="64px"
-              className="object-cover"
-            />
-          </div>
+          <WorkerAvatar photoUrl={worker.photoUrl} name={worker.name} size={64} />
         </Link>
 
         <div className="min-w-0 flex-1">

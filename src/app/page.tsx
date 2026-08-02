@@ -6,12 +6,15 @@ import { useLanguage } from "@/components/LanguageProvider";
 import CategoryGrid from "@/components/CategoryGrid";
 import WorkerCard from "@/components/WorkerCard";
 import Reveal from "@/components/Reveal";
+import { useWorkers } from "@/lib/useWorkers";
 import { WORKERS } from "@/lib/mockData";
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const { workers, loading } = useWorkers();
 
-  const featured = [...WORKERS].sort((a, b) => b.rating - a.rating).slice(0, 4);
+  const source = workers.length > 0 ? workers : WORKERS;
+  const featured = [...source].sort((a, b) => b.rating - a.rating).slice(0, 4);
 
   return (
     <div className="space-y-6 pb-6">

@@ -1,29 +1,42 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { notFound } from "next/navigation";
-import { MapPin, Briefcase, CalendarCheck } from "lucide-react";
+import { MapPin, Briefcase, CalendarCheck, Loader2 } from "lucide-react";
 import { WORKERS, skillMeta } from "@/lib/mockData";
+import { useWorkers } from "@/lib/useWorkers";
 import { useLanguage } from "@/components/LanguageProvider";
 import StarRating from "@/components/StarRating";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import WorkerAvatar from "@/components/WorkerAvatar";
 import HireModal from "@/components/HireModal";
 
 export default function WorkerProfilePage({ params }: { params: { id: string } }) {
   const { t } = useLanguage();
+  const { workers, loading } = useWorkers();
   const [hireOpen, setHireOpen] = useState(false);
-  const worker = WORKERS.find((w) => w.id === params.id);
 
-  if (!worker) notFound();
+  const source = workers.length > 0 ? workers : WORKERS;
+  const worker = source.find((w) => w.id === params.id);
+
+  if (!worker) {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-24 text-ink-400">
+          <Loader2 size={26} className="animate-spin" />
+        </div>
+      );
+    }
+    notFound();
+  }
 
   const meta = skillMeta(worker.skill);
 
   return (
     <div className="space-y-5 pb-6">
       <div className="flex items-center gap-4">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl2 bg-ink-50">
-          <Image src={worker.photoUrl} alt={worker.name} fill sizes="80px" className="object-cover" />
+        <div className="shrink-0">
+          <WorkerAvatar photoUrl={worker.photoUrl} name={worker.name} size={80} />
         </div>
         <div className="min-w-0">
           <h1 className="truncate font-display text-xl font-extrabold text-ink-900">{worker.name}</h1>
