@@ -144,13 +144,13 @@ export async function requestOtp(phoneInput: string, purpose: "LOGIN" | "REGISTR
     },
   });
 
-  const sms = await sendOtpSms(phoneNumber, code);
+  await sendOtpSms(phoneNumber, code);
 
   return {
     ok: true,
     userId,
     isNewUser,
-    devCode: process.env.NODE_ENV !== "production" && !sms.sent ? code : undefined,
+    devCode: process.env.NODE_ENV !== "production" ? code : undefined,
   };
 }
 
