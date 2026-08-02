@@ -48,7 +48,7 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/50 sm:items-center">
-      <div className="animate-scale-in flex h-[80dvh] w-full max-w-md flex-col overflow-y-auto rounded-t-xl2 bg-card p-5 sm:h-auto sm:max-h-[90vh] sm:min-h-[420px] sm:rounded-xl2">
+      <div className="animate-scale-in flex h-[min(80dvh,640px)] w-full max-w-md flex-col overflow-y-auto rounded-t-xl2 bg-card p-5 sm:rounded-xl2">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg font-bold text-ink-900">
             {t("hireTitle")} {worker.name}
@@ -64,37 +64,6 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
 
         {step === "form" && (
           <div className="space-y-4">
-            <div className="rounded-xl2 bg-surface p-3">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-400">
-                {t("reachWorker")}
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <a
-                  href={telLink(worker.momoNumber)}
-                  className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-brand-500 px-3 py-2 text-xs font-bold text-white active:bg-brand-600"
-                >
-                  <Phone size={14} /> {t("call")}
-                </a>
-                <a
-                  href={whatsappLink(worker.momoNumber)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-[#25D366] px-3 py-2 text-xs font-bold text-white active:opacity-90"
-                >
-                  <MessageCircle size={14} /> {t("whatsapp")}
-                </a>
-              </div>
-              <p className="mt-2 text-center text-xs font-semibold text-ink-500">{worker.momoNumber}</p>
-              {worker.email && (
-                <a
-                  href={`mailto:${worker.email}`}
-                  className="tap-target mt-2 flex items-center justify-center gap-1.5 rounded-xl2 border border-ink-100 bg-card px-3 py-2 text-xs font-bold text-ink-700 active:bg-ink-50"
-                >
-                  <Mail size={14} /> {t("email")}: {worker.email}
-                </a>
-              )}
-            </div>
-
             <div>
               <label className="mb-1 block text-sm font-semibold text-ink-800">
                 {t("describeTask")}
@@ -214,12 +183,42 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
         )}
 
         {step === "confirmed" && (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-10 text-center">
+          <div className="flex flex-1 flex-col justify-center gap-3 py-6 text-center">
             <CheckCircle2 size={44} className="text-brand-500" />
             <p className="font-display text-lg font-bold text-ink-900">{t("bookingConfirmed")}</p>
-            <p className="max-w-xs text-sm text-ink-400">
+            <p className="mx-auto max-w-xs text-sm text-ink-400">
               {worker.name} {t("bookingConfirmedBody")}
             </p>
+
+            <div className="mt-2 rounded-xl2 bg-surface p-3 text-left">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-400">{t("contactAfterPay")}</p>
+              <p className="mb-2 text-center font-display text-sm font-extrabold text-ink-900">{worker.momoNumber}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={telLink(worker.momoNumber)}
+                  className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-brand-500 px-3 py-2 text-xs font-bold text-white active:bg-brand-600"
+                >
+                  <Phone size={14} /> {t("call")}
+                </a>
+                <a
+                  href={whatsappLink(worker.momoNumber)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-[#25D366] px-3 py-2 text-xs font-bold text-white active:opacity-90"
+                >
+                  <MessageCircle size={14} /> {t("whatsapp")}
+                </a>
+              </div>
+              {worker.email && (
+                <a
+                  href={`mailto:${worker.email}`}
+                  className="tap-target mt-2 flex items-center justify-center gap-1.5 rounded-xl2 border border-ink-100 bg-card px-3 py-2 text-xs font-bold text-ink-700 active:bg-ink-50"
+                >
+                  <Mail size={14} /> {t("email")}: {worker.email}
+                </a>
+              )}
+            </div>
+
             <button
               onClick={onClose}
               className="tap-target mt-2 w-full rounded-xl2 bg-brand-500 px-6 text-sm font-bold text-white active:bg-brand-600"
