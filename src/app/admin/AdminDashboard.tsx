@@ -160,6 +160,25 @@ export default function AdminDashboard() {
     }
   }
 
+  async function changeBookingStatus(bookingId: string, status: string) {
+    setBusyId(bookingId);
+    setError(null);
+    try {
+      const res = await apiWithCsrf(`/api/admin/bookings/${bookingId}/status`, { body: { status } });
+      if (!res.ok) {
+        setError("ACTION_FAILED");
+        return;
+      }
+      setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, status } : b)));
+    } catch {
+      setError("ACTION_FAILED");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  const BOOKING_STATUS_OPTIONS = ["CONFIRMED", "IN_PROGRESS", "COMPLETED", "CANCELLED", "DISPUTED"];
+
   async function deleteUser(a: Application) {
     setBusyId(a.profileId);
     setError(null);
@@ -267,6 +286,22 @@ export default function AdminDashboard() {
                   <span className="font-display font-extrabold text-brand-600">
                     {b.depositRwf.toLocaleString()} RWF
                   </span>
+                </div>
+                <div className="mt-3 flex items-center gap-2 border-t border-ink-100 pt-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-ink-400">Status</span>
+                  <select
+                    value={b.status}
+                    disabled={busyId === b.id}
+                    onChange={(e) => changeBookingStatus(b.id, e.target.value)}
+                    className="flex-1 rounded-lg border border-ink-100 bg-card px-2 py-1.5 text-xs font-semibold text-ink-700 focus:border-brand-500 focus:outline-none disabled:opacity-50"
+                  >
+                    {BOOKING_STATUS_OPTIONS.map((s) => (
+                      <option key={s} value={s}>
+                        {s.replace("_", " ")}
+                      </option>
+                    ))}
+                  </select>
+                  {busyId === b.id && <Loader2 size={14} className="animate-spin text-ink-400" />}
                 </div>
               </div>
             ))}
