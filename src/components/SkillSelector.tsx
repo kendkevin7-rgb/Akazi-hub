@@ -57,10 +57,10 @@ export default function SkillSelector({
             className={clsx(
               "relative flex items-center gap-3 rounded-xl2 border-2 px-3 py-3 text-left",
               active ? border : "border-ink-100",
-              active ? bg : "bg-white"
+              active ? bg : "bg-card"
             )}
           >
-            <span className={clsx("tap-target rounded-full bg-white", color)} style={{ height: 40, width: 40 }}>
+            <span className={clsx("tap-target rounded-full bg-card", color)} style={{ height: 40, width: 40 }}>
               <Icon size={20} strokeWidth={2.25} />
             </span>
             <span className="text-sm font-bold text-ink-900">{t(`skill_${key}`)}</span>

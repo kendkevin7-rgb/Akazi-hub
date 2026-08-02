@@ -2,16 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, CheckCircle2, FileCheck2 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import SkillSelector from "@/components/SkillSelector";
 import NidVerification from "@/components/NidVerification";
 import MomoConfig from "@/components/MomoConfig";
+import DocumentUpload from "@/components/DocumentUpload";
 import { NEIGHBORHOODS } from "@/lib/mockData";
 import type { MomoProvider, RateUnit, Skill } from "@/lib/types";
 import clsx from "clsx";
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 export default function OnboardingPage() {
   const { t } = useLanguage();
@@ -33,6 +34,10 @@ export default function OnboardingPage() {
   const [nidVerified, setNidVerified] = useState(false);
 
   // Step 4
+  const [cvReady, setCvReady] = useState(false);
+  const [certReady, setCertReady] = useState(false);
+
+  // Step 5
   const [momoProvider, setMomoProvider] = useState<MomoProvider | null>(null);
   const [momoNumber, setMomoNumber] = useState("");
   const [rate, setRate] = useState("");
@@ -47,7 +52,8 @@ export default function OnboardingPage() {
       dataConsent) ||
     (step === 2 && skill !== null) ||
     (step === 3 && nidVerified) ||
-    (step === 4 && momoProvider !== null && momoNumber.trim().length >= 9 && rate.trim().length > 0);
+    (step === 4 && cvReady && certReady) ||
+    (step === 5 && momoProvider !== null && momoNumber.trim().length >= 9 && rate.trim().length > 0);
 
   function handleNext() {
     if (step < TOTAL_STEPS) {
@@ -142,7 +148,7 @@ export default function OnboardingPage() {
             </select>
           </div>
 
-          <div className="space-y-3 rounded-xl2 border border-ink-100 bg-white p-3">
+          <div className="space-y-3 rounded-xl2 border border-ink-100 bg-card p-3">
             <label className="flex items-start gap-2.5 text-sm text-ink-700">
               <input
                 type="checkbox"
@@ -186,6 +192,22 @@ export default function OnboardingPage() {
       )}
 
       {step === 4 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <span className="rounded-full bg-brand-50 p-2.5 text-brand-600">
+              <FileCheck2 size={20} />
+            </span>
+            <div>
+              <h2 className="font-display text-base font-bold text-ink-900">{t("documentsTitle")}</h2>
+              <p className="text-sm text-ink-400">{t("documentsHint")}</p>
+            </div>
+          </div>
+          <DocumentUpload label={t("cvLabel")} hint={t("uploadHint")} onChange={setCvReady} />
+          <DocumentUpload label={t("certLabel")} hint={t("uploadHint")} onChange={setCertReady} />
+        </div>
+      )}
+
+      {step === 5 && (
         <div className="space-y-5">
           <MomoConfig
             provider={momoProvider}
@@ -214,7 +236,7 @@ export default function OnboardingPage() {
                   onClick={() => setRateUnit(u)}
                   className={clsx(
                     "tap-target rounded-xl2 border-2 text-sm font-bold",
-                    rateUnit === u ? "border-brand-500 bg-brand-50 text-brand-600" : "border-ink-100 bg-white text-ink-800"
+                    rateUnit === u ? "border-brand-500 bg-brand-50 text-brand-600" : "border-ink-100 bg-card text-ink-800"
                   )}
                 >
                   {u === "hour" ? t("perHour") : t("perDay")}

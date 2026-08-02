@@ -41,7 +41,7 @@ export default function LegalDoc({
         </div>
       </div>
 
-      <p className="rounded-xl2 border border-ink-100 bg-white p-4 text-sm leading-relaxed text-ink-600">{intro}</p>
+      <p className="rounded-xl2 border border-ink-100 bg-card p-4 text-sm leading-relaxed text-ink-600">{intro}</p>
 
       <div className="space-y-5">
         {sections.map((s) => (

@@ -37,7 +37,7 @@ export default function MomoConfig({
                 onClick={() => onProvider(p.key)}
                 className={clsx(
                   "tap-target rounded-xl2 border-2 text-sm font-bold",
-                  active ? `${p.border} ${p.bg} ${p.color}` : "border-ink-100 bg-white text-ink-800"
+                  active ? `${p.border} ${p.bg} ${p.color}` : "border-ink-100 bg-card text-ink-800"
                 )}
               >
                 {p.label}

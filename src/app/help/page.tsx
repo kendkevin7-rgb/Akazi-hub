@@ -24,13 +24,13 @@ export default function HelpPage() {
         </div>
       </div>
 
-      <p className="rounded-xl2 border border-ink-100 bg-white p-4 text-sm leading-relaxed text-ink-600">
+      <p className="rounded-xl2 border border-ink-100 bg-card p-4 text-sm leading-relaxed text-ink-600">
         {t("helpIntro")}
       </p>
 
       <div className="space-y-3">
         {FAQS.map((q) => (
-          <section key={q} className="rounded-xl2 border border-ink-100 bg-white p-4">
+          <section key={q} className="rounded-xl2 border border-ink-100 bg-card p-4">
             <h2 className="mb-1 font-display text-base font-bold text-ink-900">{t(q)}</h2>
             <p className="text-sm leading-relaxed text-ink-600">{t(`${q}a`)}</p>
           </section>

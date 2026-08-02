@@ -19,7 +19,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-100 bg-white/98 backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-100 bg-card/98 backdrop-blur"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="container-mobile grid grid-cols-4">

@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/app/**/*.{ts,tsx}",
     "./src/components/**/*.{ts,tsx}",
@@ -21,22 +22,24 @@ const config: Config = {
           800: "#073730",
           900: "#052721",
         },
-        // Secondary — deep obsidian/charcoal for high-contrast reading outdoors
+        // Secondary — deep obsidian/charcoal for high-contrast reading outdoors.
+        // Mode-aware: values come from CSS variables so light/dark switch cleanly.
         ink: {
-          50: "#F3F4F3",
-          100: "#E4E6E4",
-          400: "#5B625E",
-          600: "#333733",
-          800: "#1C201D",
-          900: "#12140F",
+          50: "rgb(var(--ink-50) / <alpha-value>)",
+          100: "rgb(var(--ink-100) / <alpha-value>)",
+          400: "rgb(var(--ink-400) / <alpha-value>)",
+          600: "rgb(var(--ink-600) / <alpha-value>)",
+          800: "rgb(var(--ink-800) / <alpha-value>)",
+          900: "rgb(var(--ink-900) / <alpha-value>)",
         },
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        card: "rgb(var(--card) / <alpha-value>)",
         // Gold — Rwandan sun / MoMo-adjacent accent, used sparingly for money & trust stamps
         gold: {
           400: "#F5C518",
           500: "#EFB308",
           600: "#C99400",
         },
-        surface: "#F6F8F7",
         danger: "#B23A2E",
         // Trade color-coding system — signature element.
         // Mirrors real trade signifiers: pipe blue, tape amber, brick sienna, palette violet.

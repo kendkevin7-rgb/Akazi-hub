@@ -33,7 +33,7 @@ function SearchPageInner() {
 
   return (
     <div className="space-y-4 pb-6">
-      <div className="flex items-center gap-2 rounded-xl2 border border-ink-100 bg-white px-3">
+      <div className="flex items-center gap-2 rounded-xl2 border border-ink-100 bg-card px-3">
         <SearchIcon size={18} className="text-ink-400" />
         <input
           value={query}
@@ -48,7 +48,7 @@ function SearchPageInner() {
           onClick={() => setSkillFilter(null)}
           className={clsx(
             "tap-target shrink-0 rounded-full px-4 text-xs font-bold",
-            skillFilter === null ? "bg-brand-500 text-white" : "bg-white text-ink-800 border border-ink-100"
+            skillFilter === null ? "bg-brand-500 text-white" : "bg-card text-ink-800 border border-ink-100"
           )}
         >
           {t("filterAll")}
@@ -59,7 +59,7 @@ function SearchPageInner() {
             onClick={() => setSkillFilter(s.key)}
             className={clsx(
               "tap-target shrink-0 rounded-full px-4 text-xs font-bold",
-              skillFilter === s.key ? "bg-brand-500 text-white" : "bg-white text-ink-800 border border-ink-100"
+              skillFilter === s.key ? "bg-brand-500 text-white" : "bg-card text-ink-800 border border-ink-100"
             )}
           >
             {t(s.labelKey)}
@@ -71,7 +71,7 @@ function SearchPageInner() {
         onClick={() => setAvailableOnly((v) => !v)}
         className={clsx(
           "tap-target flex items-center gap-2 rounded-xl2 border px-3 text-xs font-bold",
-          availableOnly ? "border-brand-500 bg-brand-50 text-brand-600" : "border-ink-100 bg-white text-ink-600"
+          availableOnly ? "border-brand-500 bg-brand-50 text-brand-600" : "border-ink-100 bg-card text-ink-600"
         )}
       >
         <SlidersHorizontal size={14} />

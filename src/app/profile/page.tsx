@@ -59,7 +59,7 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <div className="space-y-5 pb-6">
-        <div className="flex flex-col items-center gap-3 rounded-xl2 border border-ink-100 bg-white p-6 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-xl2 border border-ink-100 bg-card p-6 text-center">
           <span className="tap-target rounded-full bg-brand-50 text-brand-600" style={{ height: 64, width: 64 }}>
             <LogIn size={28} />
           </span>
@@ -78,7 +78,7 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-5 pb-6">
-      <div className="flex items-center gap-3 rounded-xl2 border border-ink-100 bg-white p-4">
+      <div className="flex items-center gap-3 rounded-xl2 border border-ink-100 bg-card p-4">
         <div className="tap-target rounded-full bg-brand-500 text-white" style={{ height: 56, width: 56 }}>
           <span className="font-display text-lg font-extrabold">{initials}</span>
         </div>
@@ -94,7 +94,7 @@ export default function ProfilePage() {
         <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-400">
           {t("languageSetting")}
         </h2>
-        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-white">
+        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-card">
           {LANGUAGES.map((l, i) => (
             <button
               key={l.code}
@@ -113,7 +113,7 @@ export default function ProfilePage() {
       </section>
 
       <section>
-        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-white">
+        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-card">
           {rows.map((row, i) => (
             <Link
               key={row.label}
@@ -135,7 +135,7 @@ export default function ProfilePage() {
 
       <section>
         <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-400">{t("legal")}</h2>
-        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-white">
+        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-card">
           {[
             { icon: ScrollText, label: t("termsTitle"), href: "/legal/terms" },
             { icon: FileText, label: t("privacyTitle"), href: "/legal/privacy" },

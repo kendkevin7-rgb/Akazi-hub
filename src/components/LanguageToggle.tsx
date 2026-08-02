@@ -24,7 +24,7 @@ export default function LanguageToggle() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="tap-target gap-1.5 rounded-full border border-ink-100 bg-white px-3 text-sm font-semibold text-ink-800 active:bg-ink-50"
+        className="tap-target gap-1.5 rounded-full border border-ink-100 bg-card px-3 text-sm font-semibold text-ink-800 active:bg-ink-50"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -34,7 +34,7 @@ export default function LanguageToggle() {
       {open && (
         <div
           role="listbox"
-          className="absolute right-0 top-12 z-40 w-48 overflow-hidden rounded-xl2 border border-ink-100 bg-white shadow-floating"
+          className="absolute right-0 top-12 z-40 w-48 overflow-hidden rounded-xl2 border border-ink-100 bg-card shadow-floating"
         >
           {LANGUAGES.map((l) => (
             <button

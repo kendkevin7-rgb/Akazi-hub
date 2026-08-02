@@ -17,7 +17,7 @@ export default function WorkerCard({ worker }: { worker: Worker }) {
   const meta = skillMeta(worker.skill);
 
   return (
-    <div className="rounded-xl2 border border-ink-100 bg-white p-3 shadow-card">
+    <div className="rounded-xl2 border border-ink-100 bg-card p-3 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-floating">
       <div className="flex gap-3">
         <Link href={`/worker/${worker.id}`} className="shrink-0">
           <div className="relative h-16 w-16 overflow-hidden rounded-xl2 bg-ink-50">

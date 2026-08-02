@@ -40,7 +40,7 @@ export default function WorkerProfilePage({ params }: { params: { id: string } }
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 rounded-xl2 border border-ink-100 bg-white p-3 text-center">
+      <div className="grid grid-cols-3 gap-2 rounded-xl2 border border-ink-100 bg-card p-3 text-center">
         <div>
           <StarRating rating={worker.rating} />
           <p className="mt-1 text-[11px] font-semibold text-ink-400">
@@ -94,7 +94,7 @@ export default function WorkerProfilePage({ params }: { params: { id: string } }
         </p>
       </div>
 
-      <div className="fixed inset-x-0 bottom-16 z-20 border-t border-ink-100 bg-white/98 px-4 py-3 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-16 z-20 border-t border-ink-100 bg-card/98 px-4 py-3 backdrop-blur">
         <div className="container-mobile">
           <button
             onClick={() => setHireOpen(true)}

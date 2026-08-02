@@ -81,7 +81,7 @@ export default function CategoryGrid() {
             href={`/search?skill=${skill}`}
             className={`flex flex-col items-center gap-2 rounded-xl2 border ${c.border} ${c.bg} px-2 py-4 text-center active:scale-95`}
           >
-            <span className={`tap-target rounded-full bg-white ${c.text}`} style={{ height: 44, width: 44 }}>
+            <span className={`tap-target rounded-full bg-card ${c.text}`} style={{ height: 44, width: 44 }}>
               <Icon size={22} strokeWidth={2.25} />
             </span>
             <span className="text-xs font-bold leading-tight text-ink-800">

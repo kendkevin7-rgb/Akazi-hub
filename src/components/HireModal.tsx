@@ -28,7 +28,7 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/50 sm:items-center">
-      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-xl2 bg-white p-5 sm:rounded-xl2">
+      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-xl2 bg-card p-5 sm:rounded-xl2">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg font-bold text-ink-900">
             {t("hireTitle")} {worker.name}

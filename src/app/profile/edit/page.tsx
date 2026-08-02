@@ -83,7 +83,7 @@ export default function EditProfilePage() {
       </div>
 
       <form onSubmit={submit} className="space-y-4">
-        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-white">
+        <div className="overflow-hidden rounded-xl2 border border-ink-100 bg-card">
           {fields.map((f, i) => (
             <label
               key={f.key}

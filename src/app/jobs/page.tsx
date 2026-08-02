@@ -46,7 +46,7 @@ export default function JobsPage() {
             <Link
               key={job.id}
               href={`/worker/${worker.id}`}
-              className="block rounded-xl2 border border-ink-100 bg-white p-3 shadow-card"
+              className="block rounded-xl2 border border-ink-100 bg-card p-3 shadow-card"
             >
               <div className="flex items-center gap-3">
                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl2 bg-ink-50">

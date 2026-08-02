@@ -110,7 +110,7 @@ export default function LoginPage() {
         <h1 className="font-display text-lg font-extrabold text-ink-900">{t("loginTitle")}</h1>
       </div>
 
-      <div className="rounded-xl2 border border-ink-100 bg-white p-5">
+      <div className="rounded-xl2 border border-ink-100 bg-card p-5">
         {step === "phone" ? (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
