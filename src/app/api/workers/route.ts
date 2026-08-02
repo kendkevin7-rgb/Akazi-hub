@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
+// Never cache: this must always reflect the latest admin-approved workers.
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const profiles = await prisma.workerProfile.findMany({
     where: {
