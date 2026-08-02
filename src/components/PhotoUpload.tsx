@@ -4,6 +4,47 @@ import { useRef, useState } from "react";
 import { Camera, Loader2, X } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+/** Resize + re-encode so the upload payload stays well under hosting limits. */
+async function compressImage(file: File, maxDim = 640, quality = 0.8): Promise<string> {
+  const src = await readFileAsDataUrl(file);
+  try {
+    const img = await loadImage(src);
+    const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+    const w = Math.max(1, Math.round(img.width * scale));
+    const h = Math.max(1, Math.round(img.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return src;
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    const out = canvas.toDataURL("image/jpeg", quality);
+    return out.length < src.length ? out : src;
+  } catch {
+    return src;
+  }
+}
+
 export default function PhotoUpload({
   onChange,
 }: {
@@ -15,9 +56,9 @@ export default function PhotoUpload({
   const [uploading, setUploading] = useState(false);
   const [tooBig, setTooBig] = useState(false);
 
-  const MAX_BYTES = 4 * 1024 * 1024;
+  const MAX_BYTES = 10 * 1024 * 1024;
 
-  function handlePick(f: File | undefined) {
+  async function handlePick(f: File | undefined) {
     if (!f) return;
     if (f.size > MAX_BYTES) {
       setTooBig(true);
@@ -27,16 +68,12 @@ export default function PhotoUpload({
     setTooBig(false);
     setUploading(true);
     onChange(false);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = typeof reader.result === "string" ? reader.result : undefined;
-      setPreview(dataUrl ?? null);
-      setTimeout(() => {
-        setUploading(false);
-        onChange(true, f.name, dataUrl);
-      }, 900);
-    };
-    reader.readAsDataURL(f);
+    const dataUrl = await compressImage(f).catch(() => undefined);
+    setPreview(dataUrl ?? null);
+    setTimeout(() => {
+      setUploading(false);
+      onChange(true, f.name, dataUrl);
+    }, 600);
   }
 
   function clear() {

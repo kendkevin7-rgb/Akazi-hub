@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   const certFileName = typeof body.certFileName === "string" ? body.certFileName.slice(0, 200) : null;
   const photoDataUrl =
     typeof body.photoDataUrl === "string" && /^data:image\/(png|jpe?g|webp);base64,/.test(body.photoDataUrl)
-      ? body.photoDataUrl.slice(0, 6_000_000)
+      ? body.photoDataUrl.slice(0, 2_000_000)
       : null;
 
   if (fullName.length < 2 || fullName.length > 120) {
