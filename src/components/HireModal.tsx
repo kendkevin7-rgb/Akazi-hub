@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { X, Smartphone, Loader2, CheckCircle2, Phone, MessageCircle, Mail } from "lucide-react";
+import { X, Smartphone, Loader2, CheckCircle2, Phone, MessageCircle, Mail, Copy, Check } from "lucide-react";
 import type { Worker } from "@/lib/types";
 import { useLanguage } from "@/components/LanguageProvider";
 import { telLink, whatsappLink } from "@/lib/contact";
+import { PLATFORM_PHONE, COMMISSION_RATE, platformFee, workerReceives } from "@/lib/payments";
 
 type Step = "form" | "processing" | "ussd" | "confirmed";
 
@@ -17,8 +18,19 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [phone, setPhone] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const canSubmit = task.trim().length > 2 && date && time && phone.trim().length >= 9;
+
+  async function copyNumber() {
+    try {
+      await navigator.clipboard.writeText(PLATFORM_PHONE);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  }
 
   function handlePay() {
     setStep("processing");
@@ -130,11 +142,39 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl2 bg-gold-400/10 px-3 py-2.5">
-              <span className="text-sm font-semibold text-ink-800">{t("depositLabel")}</span>
-              <span className="font-display font-extrabold text-ink-900">
-                {DEPOSIT_RWF.toLocaleString()} RWF
-              </span>
+            <div className="rounded-xl2 border border-gold-400/30 bg-gold-400/10 p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-ink-800">{t("depositLabel")}</span>
+                <span className="font-display font-extrabold text-ink-900">
+                  {DEPOSIT_RWF.toLocaleString()} RWF
+                </span>
+              </div>
+              <div className="mt-2 space-y-1 border-t border-gold-400/20 pt-2 text-xs text-ink-600">
+                <div className="flex justify-between">
+                  <span>{t("platformFee")} ({(COMMISSION_RATE * 100).toFixed(0)}%)</span>
+                  <span className="font-semibold text-danger">− {platformFee(DEPOSIT_RWF).toLocaleString()} RWF</span>
+                </div>
+                <div className="flex justify-between font-semibold text-ink-800">
+                  <span>{t("workerReceives")}</span>
+                  <span>{workerReceives(DEPOSIT_RWF).toLocaleString()} RWF</span>
+                </div>
+              </div>
+              <div className="mt-3 rounded-xl2 bg-card px-3 py-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">{t("payTo")}</p>
+                <div className="mt-1 flex items-center justify-between gap-2">
+                  <span className="font-display text-sm font-extrabold text-ink-900">
+                    +250 794 626 004
+                    <span className="ml-1 text-xs font-semibold text-ink-400">(MTN MoMo)</span>
+                  </span>
+                  <button
+                    onClick={copyNumber}
+                    className="tap-target flex shrink-0 items-center gap-1 rounded-xl2 border border-ink-100 px-2.5 py-1.5 text-xs font-bold text-ink-700 active:bg-ink-50"
+                  >
+                    {copied ? <Check size={14} className="text-brand-500" /> : <Copy size={14} />}
+                    {copied ? t("copied") : t("copyNumber")}
+                  </button>
+                </div>
+              </div>
             </div>
 
             <button
