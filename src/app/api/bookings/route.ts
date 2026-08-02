@@ -60,5 +60,10 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ ok: true, id: booking.id });
+  // Paid booking → reveal the worker's direct contact to this client.
+  return NextResponse.json({
+    ok: true,
+    id: booking.id,
+    contact: { phone: workerProfile.momoNumber, email: workerProfile.email ?? null },
+  });
 }

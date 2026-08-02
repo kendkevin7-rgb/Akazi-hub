@@ -41,8 +41,9 @@ export async function GET() {
       jobsCompleted: p.jobsCompleted,
       yearsActive: p.yearsActive,
       momoProvider: p.momoProvider,
-      momoNumber: p.momoNumber,
-      email: p.email,
+      // Contact is intentionally withheld from this public endpoint — it is
+      // revealed to a client only after they pay, via the booking API.
+      momoNumber: "",
       bio: p.bio ?? "",
       available: p.isAvailable,
       createdAt: p.createdAt.toISOString(),

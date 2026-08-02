@@ -43,6 +43,7 @@ export default function HirePage({ params }: { params: { id: string } }) {
   const [phone, setPhone] = useState("");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [contact, setContact] = useState<{ phone: string; email?: string | null } | null>(null);
 
   if (!worker) {
     if (loading) {
@@ -80,6 +81,8 @@ export default function HirePage({ params }: { params: { id: string } }) {
         setError("GENERIC");
         return;
       }
+      const data = await res.json().catch(() => null);
+      setContact(data?.contact ?? null);
       setStep("processing");
       setTimeout(() => setStep("done"), 1600);
     } catch {
@@ -260,7 +263,9 @@ export default function HirePage({ params }: { params: { id: string } }) {
               <WorkerAvatar photoUrl={worker.photoUrl} name={worker.name} size={48} />
               <div className="min-w-0">
                 <p className="truncate font-display text-sm font-bold text-ink-900">{worker.name}</p>
-                <p className="text-xs font-semibold text-ink-500">{worker.momoNumber}</p>
+                {contact?.phone && (
+                  <p className="text-xs font-semibold text-ink-500">{contact.phone}</p>
+                )}
               </div>
             </div>
 
@@ -277,13 +282,13 @@ export default function HirePage({ params }: { params: { id: string } }) {
 
             <div className="mt-3 grid grid-cols-2 gap-2">
               <a
-                href={telLink(worker.momoNumber)}
+                href={telLink(contact?.phone ?? worker.momoNumber)}
                 className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-brand-500 px-3 py-2.5 text-sm font-bold text-white active:bg-brand-600"
               >
                 <Phone size={16} /> {t("call")}
               </a>
               <a
-                href={whatsappLink(worker.momoNumber)}
+                href={whatsappLink(contact?.phone ?? worker.momoNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="tap-target flex items-center justify-center gap-1.5 rounded-xl2 bg-[#25D366] px-3 py-2.5 text-sm font-bold text-white active:opacity-90"
@@ -291,12 +296,12 @@ export default function HirePage({ params }: { params: { id: string } }) {
                 <MessageCircle size={16} /> {t("whatsapp")}
               </a>
             </div>
-            {worker.email && (
+            {contact?.email && (
               <a
-                href={`mailto:${worker.email}`}
+                href={`mailto:${contact.email}`}
                 className="tap-target mt-2 flex items-center justify-center gap-1.5 rounded-xl2 border border-ink-100 px-3 py-2.5 text-sm font-bold text-ink-700 active:bg-ink-50"
               >
-                <Mail size={16} /> {t("email")}: {worker.email}
+                <Mail size={16} /> {t("email")}: {contact.email}
               </a>
             )}
           </div>

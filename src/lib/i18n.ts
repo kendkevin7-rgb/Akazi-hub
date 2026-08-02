@@ -120,6 +120,7 @@ export const dictionaries: Record<Language, Dict> = {
     cancel: "Cancel",
     // My Jobs
     myJobsTitle: "My Jobs",
+    myBookings: "My Bookings",
     noJobsYet: "No jobs yet",
     noJobsBody: "Jobs you book will show up here.",
     findWorker: "Find a worker",
@@ -317,6 +318,7 @@ export const dictionaries: Record<Language, Dict> = {
     close: "Funga",
     cancel: "Kuraguza",
     myJobsTitle: "Imirimo yanjye",
+    myBookings: "Gahunda zanjye",
     noJobsYet: "Nta kazi urabona",
     noJobsBody: "Akazi wahize kazagaragara hano.",
     findWorker: "Shaka umukozi",
@@ -508,6 +510,7 @@ export const dictionaries: Record<Language, Dict> = {
     close: "Fermer",
     cancel: "Annuler",
     myJobsTitle: "Mes travaux",
+    myBookings: "Mes réservations",
     noJobsYet: "Aucun travail pour l'instant",
     noJobsBody: "Les travaux que vous réservez apparaîtront ici.",
     findWorker: "Trouver un travailleur",
