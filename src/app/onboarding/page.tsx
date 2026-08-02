@@ -108,7 +108,7 @@ export default function OnboardingPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setSubmitError(data.error === "ALREADY_VERIFIED" ? "ALREADY_VERIFIED" : "GENERIC");
+        setSubmitError(data.error ?? "GENERIC");
         return;
       }
       setSubmitted(true);
@@ -342,6 +342,10 @@ export default function OnboardingPage() {
               </>
             ) : submitError === "ALREADY_VERIFIED" ? (
               t("alreadyVerified")
+            ) : submitError === "PHOTO_REQUIRED" ? (
+              t("photoRequired")
+            ) : submitError === "INVALID_NID" ? (
+              t("nidHint")
             ) : (
               t("errGeneric")
             )}

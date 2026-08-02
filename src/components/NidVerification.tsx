@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { BadgeCheck, Loader2, IdCard } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
-
-const NID_PATTERN = /^[12]\d{15}$/;
+import { isValidRwandaNid } from "@/lib/nid";
 
 export default function NidVerification({
   value,
@@ -21,21 +20,18 @@ export default function NidVerification({
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isValidFormat = NID_PATTERN.test(value);
-
   function handleVerify() {
     setError(null);
-    if (!isValidFormat) {
-      setError(t("nidHint"));
-      return;
-    }
     setChecking(true);
     onVerified(false);
-    // Mock call to Rwanda's National Identification Agency (NIDA) lookup service.
     setTimeout(() => {
       setChecking(false);
-      onVerified(true);
-    }, 1500);
+      if (isValidRwandaNid(value)) {
+        onVerified(true);
+      } else {
+        setError(t("nidHint"));
+      }
+    }, 600);
   }
 
   return (

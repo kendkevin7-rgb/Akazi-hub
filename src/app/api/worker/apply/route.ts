@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser, validateCsrf } from "@/lib/auth";
+import { isValidRwandaNid } from "@/lib/nid";
 import { prisma } from "@/lib/db";
 
 const VALID_SKILLS = [
@@ -73,7 +74,10 @@ export async function POST(req: NextRequest) {
   if (!/^\+?\d{9,15}$/.test(momoNumber)) {
     return NextResponse.json({ error: "INVALID_MOMO_NUMBER" }, { status: 400 });
   }
-  if (!/^[12]\d{15}$/.test(nidNumber)) {
+  if (photoDataUrl === null) {
+    return NextResponse.json({ error: "PHOTO_REQUIRED" }, { status: 400 });
+  }
+  if (!isValidRwandaNid(nidNumber)) {
     return NextResponse.json({ error: "INVALID_NID" }, { status: 400 });
   }
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
