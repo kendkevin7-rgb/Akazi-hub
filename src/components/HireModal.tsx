@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Smartphone, Loader2, CheckCircle2, Phone, MessageCircle, Mail, Copy, Check } from "lucide-react";
 import type { Worker } from "@/lib/types";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -22,6 +22,13 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
 
   const canSubmit = task.trim().length > 2 && date && time && phone.trim().length >= 9;
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   async function copyNumber() {
     try {
       await navigator.clipboard.writeText(PLATFORM_PHONE);
@@ -41,7 +48,7 @@ export default function HireModal({ worker, onClose }: { worker: Worker; onClose
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/50 sm:items-center">
-      <div className="flex min-h-[55vh] w-full max-w-md flex-col overflow-y-auto rounded-t-xl2 bg-card p-5 sm:min-h-0 sm:rounded-xl2">
+      <div className="animate-scale-in flex h-[80dvh] w-full max-w-md flex-col overflow-y-auto rounded-t-xl2 bg-card p-5 sm:h-auto sm:max-h-[90vh] sm:min-h-[420px] sm:rounded-xl2">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg font-bold text-ink-900">
             {t("hireTitle")} {worker.name}
