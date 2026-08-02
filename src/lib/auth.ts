@@ -146,11 +146,12 @@ export async function requestOtp(phoneInput: string, purpose: "LOGIN" | "REGISTR
 
   await sendOtpSms(phoneNumber, code);
 
+  const isDemo = process.env.OTP_DEMO_MODE === "true";
   return {
     ok: true,
     userId,
     isNewUser,
-    devCode: process.env.NODE_ENV !== "production" ? code : undefined,
+    devCode: process.env.NODE_ENV !== "production" || isDemo ? code : undefined,
   };
 }
 
