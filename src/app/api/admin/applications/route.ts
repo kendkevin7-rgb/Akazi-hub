@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
       momoProvider: a.momoProvider,
       momoNumber: a.momoNumber,
       nidNumber: a.verification?.nidNumber ?? null,
+      photoUrl: a.photoUrl,
       photoFileName: a.photoFileName,
       cvFileName: a.cvFileName,
       certFileName: a.certFileName,

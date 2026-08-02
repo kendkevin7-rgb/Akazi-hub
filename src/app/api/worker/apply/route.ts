@@ -46,6 +46,10 @@ export async function POST(req: NextRequest) {
   const photoFileName = typeof body.photoFileName === "string" ? body.photoFileName.slice(0, 200) : null;
   const cvFileName = typeof body.cvFileName === "string" ? body.cvFileName.slice(0, 200) : null;
   const certFileName = typeof body.certFileName === "string" ? body.certFileName.slice(0, 200) : null;
+  const photoDataUrl =
+    typeof body.photoDataUrl === "string" && /^data:image\/(png|jpe?g|webp);base64,/.test(body.photoDataUrl)
+      ? body.photoDataUrl.slice(0, 6_000_000)
+      : null;
 
   if (fullName.length < 2 || fullName.length > 120) {
     return NextResponse.json({ error: "INVALID_NAME" }, { status: 400 });
@@ -90,6 +94,7 @@ export async function POST(req: NextRequest) {
         momoProvider: momoProvider as never,
         momoNumber,
         photoFileName,
+        photoUrl: photoDataUrl ?? undefined,
         cvFileName,
         certFileName,
         bio: body.bio && typeof body.bio === "string" ? body.bio.slice(0, 500) : undefined,
@@ -102,6 +107,7 @@ export async function POST(req: NextRequest) {
         momoProvider: momoProvider as never,
         momoNumber,
         photoFileName,
+        photoUrl: photoDataUrl ?? undefined,
         cvFileName,
         certFileName,
       },

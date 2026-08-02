@@ -34,6 +34,7 @@ export default function OnboardingPage() {
   const [dataConsent, setDataConsent] = useState(false);
   const [photoReady, setPhotoReady] = useState(false);
   const [photoFileName, setPhotoFileName] = useState<string | undefined>(undefined);
+  const [photoDataUrl, setPhotoDataUrl] = useState<string | undefined>(undefined);
 
   // Step 2
   const [rulesAgreed, setRulesAgreed] = useState(false);
@@ -98,6 +99,7 @@ export default function OnboardingPage() {
           rateRwf: Number(rate),
           rateUnit,
           photoFileName,
+          photoDataUrl,
           cvFileName,
           certFileName,
         },
@@ -163,9 +165,10 @@ export default function OnboardingPage() {
 
       {step === 1 && (
         <div className="space-y-4">
-          <PhotoUpload onChange={(ready, name) => {
+          <PhotoUpload onChange={(ready, name, dataUrl) => {
             setPhotoReady(ready);
             setPhotoFileName(name);
+            setPhotoDataUrl(dataUrl);
           }} />
           <div>
             <label className="mb-1 block text-sm font-semibold text-ink-800">{t("fullName")}</label>

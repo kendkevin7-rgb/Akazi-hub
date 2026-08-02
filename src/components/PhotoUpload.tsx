@@ -7,23 +7,33 @@ import { useLanguage } from "@/components/LanguageProvider";
 export default function PhotoUpload({
   onChange,
 }: {
-  onChange: (ready: boolean, fileName?: string) => void;
+  onChange: (ready: boolean, fileName?: string, dataUrl?: string) => void;
 }) {
   const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [tooBig, setTooBig] = useState(false);
+
+  const MAX_BYTES = 4 * 1024 * 1024;
 
   function handlePick(f: File | undefined) {
     if (!f) return;
+    if (f.size > MAX_BYTES) {
+      setTooBig(true);
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
+    setTooBig(false);
     setUploading(true);
     onChange(false);
     const reader = new FileReader();
     reader.onload = () => {
-      setPreview(typeof reader.result === "string" ? reader.result : null);
+      const dataUrl = typeof reader.result === "string" ? reader.result : undefined;
+      setPreview(dataUrl ?? null);
       setTimeout(() => {
         setUploading(false);
-        onChange(true, f.name);
+        onChange(true, f.name, dataUrl);
       }, 900);
     };
     reader.readAsDataURL(f);
@@ -75,6 +85,7 @@ export default function PhotoUpload({
         )}
       </button>
       <p className="text-xs text-ink-400">{t("photoHint")}</p>
+      {tooBig && <p className="text-xs font-semibold text-danger">{t("photoTooBig")}</p>}
       <input
         ref={inputRef}
         type="file"

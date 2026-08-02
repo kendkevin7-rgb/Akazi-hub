@@ -62,6 +62,7 @@ export const dictionaries: Record<Language, Dict> = {
     photoLabel: "Profile photo",
     addPhoto: "Add photo",
     photoHint: "Clear, front-facing photo — PNG or JPG, max 5 MB",
+   photoTooBig: "Photo too large — please choose a file under 4 MB.",
     photoPreview: "Profile photo preview",
     removePhoto: "Remove photo",
     // Worker code of conduct
@@ -249,6 +250,7 @@ export const dictionaries: Record<Language, Dict> = {
     photoLabel: "Ifoto y'umwirondoro",
     addPhoto: "Ongeraho ifoto",
     photoHint: "Ifoto itangaje, yerekanwa neza — PNG cyangwa JPG, 5 MB byibuze",
+   photoTooBig: "Ifoto nini cyane — hitamo ifoto iri munsi ya 4 MB.",
     photoPreview: "Ifoto y'umwirondoro",
     removePhoto: "Kuraho ifoto",
     // Worker code of conduct
@@ -428,6 +430,7 @@ export const dictionaries: Record<Language, Dict> = {
     photoLabel: "Photo de profil",
     addPhoto: "Ajouter une photo",
     photoHint: "Photo nette de face — PNG ou JPG, 5 Mo max",
+   photoTooBig: "Photo trop volumineuse — choisissez un fichier de moins de 4 Mo.",
     photoPreview: "Aperçu de la photo de profil",
     removePhoto: "Supprimer la photo",
     // Worker code of conduct

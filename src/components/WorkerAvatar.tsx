@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 export default function WorkerAvatar({
   photoUrl,
   name,
@@ -21,7 +19,8 @@ export default function WorkerAvatar({
   if (photoUrl) {
     return (
       <div className="relative overflow-hidden rounded-xl2 bg-ink-50" style={{ height: size, width: size }}>
-        <Image src={photoUrl} alt={name} fill sizes={`${size}px`} className="object-cover" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={photoUrl} alt={name} style={{ height: size, width: size }} className="object-cover" />
       </div>
     );
   }
